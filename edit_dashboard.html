@@ -1,0 +1,256 @@
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+<title>직트 유튜브 운영 시스템 — 영상 편집</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  :root{
+    --t1:#1a1816; --t2:#4a4440; --t3:#7a736e;
+    --card:#ffffff; --card2:#faf7f4; --card3:#f3efe9;
+    --line:rgba(0,0,0,.07);
+    --accent:#5C6672;
+    --accent-grad:linear-gradient(135deg,#8E99A8 0%,#5C6672 55%,#454E5C 100%);
+    --bg-grad:#EAE7E1;
+    --shadow-card:0 2px 8px rgba(0,0,0,.05);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg-grad); color:var(--t1);
+    font-family:'Pretendard','Noto Sans KR',-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+    line-height:1.55; font-size:15px; font-weight:500; font-variant-numeric:tabular-nums;}
+  .wrap{max-width:1080px; margin:0 auto; padding:32px 20px 60px;}
+
+  .back{display:inline-flex; align-items:center; gap:6px; font-size:15px; font-weight:700; color:var(--accent);
+    text-decoration:none; margin-bottom:18px; background:var(--card); border:1px solid var(--line);
+    border-radius:10px; padding:9px 16px; transition:background .15s, color .15s;}
+  .back:hover{background:var(--accent); color:#fff; border-color:var(--accent);}
+
+  .head{margin-top:22px;}
+  .eyebrow{font-size:14px; font-weight:800; letter-spacing:.20em; color:var(--accent);}
+  h1{font-size:29px; margin:8px 0 0; font-weight:800; letter-spacing:-.012em;}
+  .subtitle{font-size:15px; color:var(--t2); margin-top:9px; max-width:760px;}
+
+  .sec{margin-top:34px;}
+  .sec > h2{font-size:17px; font-weight:800; letter-spacing:.12em; color:var(--accent);
+    margin:0 0 14px; }
+
+  .panel{background:var(--card); border:1px solid var(--line); border-radius:12px;
+    padding:24px; box-shadow:var(--shadow-card);}
+
+  /* 시작하기 */
+  .start{background:var(--card); border:1px solid var(--accent); border-radius:12px; padding:24px;
+    box-shadow:0 4px 14px rgba(92,102,114,.10), 0 20px 50px rgba(92,102,114,.10);}
+  .start h3{margin:0; font-size:17px; font-weight:800;}
+  .pathbox{margin-top:14px; display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    background:var(--card3); border:1px solid var(--line); border-radius:12px; padding:12px 14px;}
+  .pathbox code{font-family:Consolas,'D2Coding',monospace; font-size:15px; color:var(--t1); flex:1 1 320px; word-break:break-all;}
+  .btn{border:none; border-radius:999px; padding:9px 18px; font-size:14px; font-weight:800;
+    background:var(--accent-grad); color:#fff; cursor:pointer; font-family:inherit;
+    box-shadow:0 3px 8px rgba(92,102,114,.30);}
+  .btn:hover{filter:brightness(1.06);}
+  .btn.ghost{background:var(--card); color:var(--t2); border:1px solid var(--line); box-shadow:none; text-decoration:none;
+    display:inline-flex; align-items:center;}
+  .btn.ghost:hover{border-color:var(--accent); color:var(--accent);}
+  .hint{font-size:14px; color:var(--t3); margin-top:12px; line-height:1.7;}
+
+  /* 3단계 */
+  .flow{display:grid; grid-template-columns:repeat(3,1fr); gap:14px;}
+  @media (max-width:760px){ .flow{grid-template-columns:1fr;} }
+  .fl{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px; box-shadow:var(--shadow-card);}
+  .fl .n{width:24px; height:24px; border-radius:50%; background:var(--accent-grad); color:#fff;
+    font-size:14px; font-weight:800; display:flex; align-items:center; justify-content:center;}
+  .fl h3{font-size:15px; margin:12px 0 0; font-weight:800;}
+  .fl p{font-size:14px; color:var(--t2); margin:8px 0 0; line-height:1.65;}
+  .fl .file{margin-top:10px; font-family:Consolas,'D2Coding',monospace; font-size:14px; color:var(--t3);
+    background:var(--card3); border-radius:8px; padding:7px 10px; line-height:1.7;}
+
+  /* 기능 목록 */
+  .feat{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  @media (max-width:760px){ .feat{grid-template-columns:1fr;} }
+  .ft{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px 18px;
+    box-shadow:0 1px 2px rgba(43,41,38,.03), 0 8px 24px rgba(43,41,38,.04);}
+  .ft-top{display:flex; align-items:center; justify-content:space-between; gap:10px;}
+  .ft h3{font-size:15.5px; margin:0; font-weight:800;}
+  .ft p{font-size:14px; color:var(--t2); margin:7px 0 0; line-height:1.6;}
+  .tag{display:inline-block; font-size:14px; font-weight:800; white-space:nowrap;}
+  .tag.on{background:#EEF0F2; color:var(--accent);}
+  .tag.soon{background:var(--card3); color:var(--t3);}
+
+  table{width:100%; border-collapse:collapse;}
+  th,td{text-align:left; padding:10px 12px; font-size:14px; border-top:1px solid var(--line); vertical-align:top;}
+  th{font-size:14px; color:var(--t3); font-weight:800; letter-spacing:.04em; border-top:none;}
+  td code{font-family:Consolas,'D2Coding',monospace; font-size:14px; background:var(--card3);
+    padding:2px 6px; border-radius:6px; color:var(--t1);}
+  td.k{white-space:nowrap; font-weight:700;}
+
+  .note{font-size:14px; color:var(--t3); margin-top:12px; line-height:1.75;}
+  footer.foot{max-width:1080px; margin:30px auto 0; padding:0 20px; font-size:14px; color:var(--t3); text-align:center;}
+</style>
+
+<div class="wrap">
+  <a class="back" href="index.html">← 메인으로</a>
+
+  <div class="head">
+    <div class="eyebrow">JIKT · YOUTUBE OPS — TRACK 3</div>
+    <h1>영상 편집 (제작)</h1>
+    <div class="subtitle">촬영 뒤에 남는 노가다 — 무음 자르기, 반복 테이크 지우기, 음량 맞추기, 자막 달기 —
+      를 자동으로 처리합니다. 원고를 같이 넣으면 원고에 없는 말을 전부 걸러내 정확도가 크게 올라갑니다.</div>
+  </div>
+
+  <div class="sec">
+    <h2>시작하기</h2>
+    <div class="start">
+      <h3>편집자동화 폴더를 열고 「2_편집하기」를 실행하세요</h3>
+      <div class="pathbox">
+        <code id="p">D:\유튜브 운용 시스템\편집자동화</code>
+        <button class="btn" onclick="copyPath()" id="cbtn">경로 복사</button>
+        <a class="btn ghost" href="편집자동화/">폴더 내용 보기</a>
+      </div>
+      <div class="hint">
+        복사한 경로를 탐색기 주소창에 붙여넣으면 폴더가 열립니다.<br>
+        자주 쓰시면 <b>「2_편집하기」를 오른쪽 클릭 → 보내기 → 바탕 화면에 바로 가기 만들기</b> 를 한 번만 해두세요.
+        그 뒤로는 바탕화면 아이콘을 두 번 누르면 바로 시작됩니다.
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h2>쓰는 법 — 세 단계</h2>
+    <div class="flow">
+      <div class="fl">
+        <div class="n">1</div>
+        <h3>녹음 파일 + 원고</h3>
+        <p>녹음 파일과 <b>같은 이름</b>의 글 파일(.txt)을 같은 폴더에 둡니다. 원고 없이도 되지만, 넣으면 훨씬 정확합니다.</p>
+        <div class="file">내영상.m4a<br>내영상.txt</div>
+      </div>
+      <div class="fl">
+        <div class="n">2</div>
+        <h3>2_편집하기 실행</h3>
+        <p>두 번 클릭하면 파일 고르는 창이 뜹니다. 녹음 파일을 아이콘 위로 끌어다 놓아도 됩니다.
+          30분 녹음 기준 약 1시간 걸립니다.</p>
+        <div class="file">받아쓰기가 가장 오래 걸립니다<br>진행률이 5초마다 표시됩니다</div>
+      </div>
+      <div class="fl">
+        <div class="n">3</div>
+        <h3>캡컷에 넣기</h3>
+        <p>「결과」 폴더의 음성 파일을 캡컷에 끌어다 놓고, 자막은 <b>텍스트 &gt; 로컬 자막 가져오기</b>로 불러옵니다.</p>
+        <div class="file">1_편집된음성_....m4a<br>3_자막_....srt</div>
+      </div>
+    </div>
+    <div class="note">원본 녹음 파일은 절대 건드리지 않습니다. 결과는 항상 「결과」 폴더에 새로 만들어집니다.</div>
+  </div>
+
+  <div class="sec">
+    <h2>나오는 것 — 세 개</h2>
+    <div class="panel">
+      <table>
+        <tr><th style="width:190px">파일</th><th>무엇인가</th></tr>
+        <tr><td class="k"><code>1_편집된음성</code></td>
+            <td>반복·무음·숨소리가 잘려나간 음성(영상이면 mp4). <b>이게 곧 편집 결과물</b>이라 캡컷에 그대로 넣으면 됩니다.
+              실행할 때마다 이름 뒤에 시각이 붙어 옛것과 섞이지 않습니다.</td></tr>
+        <tr><td class="k"><code>2_대본</code></td>
+            <td>그 음성에 실제로 담긴 말을 글로 적은 것. 원고와 나란히 놓고 제대로 잘렸는지 눈으로 바로 확인합니다.</td></tr>
+        <tr><td class="k"><code>3_자막</code></td>
+            <td>컷에 맞춰 시간이 정렬된 자막(SRT). 의미 단위로 줄이 나뉘어 있습니다.</td></tr>
+      </table>
+      <div class="note">검토 보고서·프리미어용 파일·받아쓰기 결과 등은 「결과\자세히」 폴더에 들어갑니다.
+        그중 <code>받아쓰기_....json</code> 은 지우지 마세요 — 다시 돌릴 때 받아쓰기 시간을 통째로 아껴줍니다.</div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h2>지금 할 수 있는 것</h2>
+    <div class="feat">
+      <div class="ft">
+        <div class="ft-top"><h3>컷 편집</h3><span class="tag on">쓸 수 있음</span></div>
+        <p>무음 구간, 반복해서 다시 말한 부분, 말더듬, 숨소리를 잘라냅니다.
+          원고를 넣으면 원고에 없는 말을 기준으로 판정해 오탐이 거의 없습니다.</p>
+      </div>
+      <div class="ft">
+        <div class="ft-top"><h3>음성 보정</h3><span class="tag on">쓸 수 있음</span></div>
+        <p>치찰음 완화, 잡음 줄이기, 저음 정리, 유튜브 표준 음량(−14 LUFS)까지 자동으로 맞춥니다.</p>
+      </div>
+      <div class="ft">
+        <div class="ft-top"><h3>자막</h3><span class="tag on">쓸 수 있음</span></div>
+        <p>컷에 맞춘 SRT를 만듭니다. 글자수가 아니라 의미 단위로 줄을 나눠 브루보다 자연스럽습니다.
+          자주 틀리는 낱말은 설정에 적어두면 자동 교정됩니다.</p>
+      </div>
+      <div class="ft">
+        <div class="ft-top"><h3>원고 대조</h3><span class="tag on">쓸 수 있음</span></div>
+        <p>녹음 옆에 원고를 두면 잘못 알아들은 말을 원고 표현으로 되돌리고,
+          같은 줄을 여러 번 말했을 때 마지막 한 번만 정확히 남깁니다.</p>
+      </div>
+      <div class="ft">
+        <div class="ft-top"><h3>롱폼 → 쇼츠 분할</h3><span class="tag soon">아직 안 써봄</span></div>
+        <p>긴 영상에서 1분 내외 세로형 조각을 여러 개 뽑는 기능이 들어 있습니다. 아직 실제로 돌려보지 않았습니다.</p>
+      </div>
+      <div class="ft">
+        <div class="ft-top"><h3>2~3캠 싱크</h3><span class="tag soon">아직 안 써봄</span></div>
+        <p>여러 대로 찍은 영상의 소리를 맞춰 한 타임라인으로 붙이는 기능입니다. 아직 실제로 돌려보지 않았습니다.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h2>덜 자르거나 더 자르고 싶을 때</h2>
+    <div class="panel">
+      <p style="font-size:15px;color:var(--t2);margin:0 0 14px;line-height:1.7;">
+        <code>config.json.example</code>·<code>config.json</code>은 지금 연결이 끊겨 있어 고쳐도 아무 효과가
+        없습니다(2026-09-01 확인). 여유값·문턱값을 고치려면 이 화면에서 직접 바꾸지 말고
+        <b>클로드에게 "이럴 때 어떻게 조정해줘"라고 말씀해 주세요</b> — 실제로 값을 읽는 파일
+        (<code>engine\config.py</code>)을 클로드가 안전하게 고쳐 드립니다.</p>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h2>진행 현황</h2>
+    <div class="panel">
+      <table>
+        <tr><th style="width:110px">파트</th><th style="width:140px">상태</th><th>내용</th></tr>
+        <tr><td class="k">PART 7</td><td><span class="tag on">완료 · 검증됨</span></td>
+            <td>컷 편집 · 음성 보정 · 자막. 실제 녹음으로 원고와 100% 일치 확인.
+              반복 감지는 직트님 녹음 습관 6가지 패턴을 모두 통과했고, 반복 없는 원고에서는 한 글자도 지우지 않습니다.</td></tr>
+        <tr><td class="k">씹힘 방지</td><td><span class="tag on">2026-09-02 · 자체 진단 탑재</span></td>
+            <td>결과가 나오는 순간 "살릴 말을 파고들지 않았는지" 프로그램이 스스로 확인합니다.
+              문제가 있으면 화면에 크게 경고하고, 파일 이름에도 <code>[위험-씹힘]</code> 표시를 자동으로 붙입니다.
+              지금까지 실제 녹음 기준 확정 씹힘 0건.</td></tr>
+        <tr><td class="k">낱말 시각 정밀 보정</td><td><span class="tag on">2026-09-02 · 재도입 성공</span></td>
+            <td>받아쓰기가 알려주는 낱말 시각을 소리에 맞춰 다시 재는 기능(강제정렬). 두 번 실패 끝에
+              "정렬은 범위를 넓히는 쪽으로만 쓰고, 좁히는 쪽은 자동으로 버린다"는 방식으로 바꿔 안전하게 도입.</td></tr>
+        <tr><td class="k">PART 8</td><td><span class="tag on">기능 있음</span></td>
+            <td>자막 다듬기(고유명사 교정 · 읽기속도 조절 · 줄 균형). 컷 편집과 함께 자동으로 돕니다.</td></tr>
+        <tr><td class="k">PART 9</td><td><span class="tag soon">아직 안 써봄</span></td>
+            <td>롱폼 → 쇼츠 자동 분할. 코드는 들어와 있고 윈도우에서 돌도록 손봤지만 실제 검증은 아직입니다.</td></tr>
+        <tr><td class="k">PART 11</td><td><span class="tag soon">예정</span></td>
+            <td>인포그래픽 영상 소스. 직트님이 별도로 운영 중인 것을 여기로 편입할 예정입니다.</td></tr>
+      </table>
+      <div class="note">바탕이 된 코드는 「비블 bibl」 공개 저장소이며, 맥·프리미어 전용이던 것을
+        윈도우·캡컷에서 돌도록 옮기고 긴 반복 테이크 감지와 원고 대조를 새로 얹었습니다.
+        자세한 시행착오 기록은 클로드 프로젝트 문서(「편집자동화 — 씹힘 진짜 원인과 강제정렬」)에 있습니다.</div>
+    </div>
+  </div>
+</div>
+
+<footer class="foot">직트 유튜브 운영 시스템 — 영상 편집 트랙</footer>
+
+<script>
+  function copyPath(){
+    var t = document.getElementById('p').textContent;
+    var b = document.getElementById('cbtn');
+    function done(ok){
+      b.textContent = ok ? '복사됨' : '아래 글자를 직접 복사하세요';
+      setTimeout(function(){ b.textContent = '경로 복사'; }, 1800);
+    }
+    try{
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(t).then(function(){done(true);}, function(){fallback();});
+      } else { fallback(); }
+    }catch(e){ fallback(); }
+    function fallback(){
+      try{
+        var ta = document.createElement('textarea');
+        ta.value = t; document.body.appendChild(ta); ta.select();
+        var ok = document.execCommand('copy');
+        document.body.removeChild(ta); done(ok);
+      }catch(e){ done(false); }
+    }
+  }
+</script>

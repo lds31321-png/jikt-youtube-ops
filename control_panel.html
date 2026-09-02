@@ -1,0 +1,245 @@
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+<title>직트 유튜브 운영 시스템 — 콘텐츠 관리 시트</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  :root{
+    --t1:#1a1816; --t2:#4a4440; --t3:#7a736e;
+    --card:#ffffff; --card2:#faf7f4; --card3:#f3efe9;
+    --line:rgba(0,0,0,.07);
+    --accent:#5C6672;
+    --crisis:#C0504D; --caution:#B7791F; --extreme:#E65C66;
+    --accent-grad:linear-gradient(135deg,#8E99A8 0%,#5C6672 55%,#454E5C 100%);
+    --bg-grad:#EAE7E1;
+    --shadow-card:0 2px 8px rgba(0,0,0,.05);
+    --shadow-card-hover:0 6px 20px rgba(0,0,0,.10);
+    --badge-shadow:0 3px 8px rgba(92,102,114,.30);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg-grad); color:var(--t1);
+    font-family:'Pretendard','Noto Sans KR',-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+    line-height:1.55; font-size:15px; font-weight:500; font-variant-numeric:tabular-nums;}
+  .wrap{max-width:1080px; margin:0 auto; padding:44px 20px 60px;}
+
+  .back{display:inline-flex; align-items:center; gap:6px; font-size:15px; font-weight:700; color:var(--accent);
+    text-decoration:none; margin-bottom:18px; background:var(--card); border:1px solid var(--line);
+    border-radius:10px; padding:9px 16px; transition:background .15s, color .15s;}
+  .back:hover{background:var(--accent); color:#fff; border-color:var(--accent);}
+
+  .head{text-align:center;}
+  .eyebrow{font-size:14px; font-weight:800; letter-spacing:.20em; color:var(--accent);}
+  h1{font-size:30px; margin:8px 0 0; font-weight:800; letter-spacing:-.012em; color:var(--t1);}
+  .subtitle{font-size:15px; color:var(--t2); margin-top:9px; max-width:640px; margin-left:auto; margin-right:auto;}
+
+  .note{margin-top:22px; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px 20px;
+    font-size:15px; color:var(--t2); line-height:1.7; box-shadow:0 1px 2px rgba(43,41,38,.03), 0 10px 30px rgba(43,41,38,.05);}
+  .note b{color:var(--t1);}
+
+  h2.section{font-size:17px; font-weight:800; margin:40px 0 4px; color:var(--t1); display:flex; align-items:center; gap:8px;}
+  h2.section .n{width:22px; height:22px; border-radius:50%; background:var(--accent-grad); color:#fff; font-size:14px;
+    display:flex; align-items:center; justify-content:center; font-weight:800; flex:0 0 auto; box-shadow:var(--badge-shadow);}
+  .section-desc{font-size:14px; color:var(--t3); margin:0 0 16px 30px;}
+
+  /* ---- 시트형 표 ---- */
+  .sheet{width:100%; border-collapse:collapse; background:var(--card); border:1px solid var(--line); border-radius:12px;
+    overflow:hidden; box-shadow:var(--shadow-card); font-size:15px;}
+  .sheet th, .sheet td{padding:12px 14px; border-bottom:1px solid var(--line); border-right:1px solid var(--line); text-align:left;}
+  .sheet th:last-child, .sheet td:last-child{border-right:none;}
+  .sheet thead th{background:var(--card3); font-size:15px; color:var(--t2); font-weight:700; letter-spacing:.02em;
+     position:sticky; top:0;}
+  .sheet tbody tr:last-child td{border-bottom:none;}
+  .sheet tbody tr:hover{background:var(--card2);}
+  .sheet .metric-name{font-weight:700; color:var(--t1); white-space:nowrap;}
+  .sheet .grp-row td{background:var(--accent-grad); color:#fff; font-weight:800; font-size:14px; letter-spacing:.01em;
+    padding:9px 14px; border-right:none;}
+  .sheet td.owner-col{text-align:center; font-size:15px;}
+  .dot-on{color:var(--accent); font-weight:800;}
+  .dot-off{color:var(--line);}
+  .status-cell{font-size:14px; font-weight:800; white-space:nowrap;}
+  .st-none{color:var(--crisis);}
+  .st-part{color:var(--caution);}
+
+  .arrow-row td{background:var(--card2); color:var(--t3); font-size:14px; text-align:center; padding:7px; border-right:none;}
+
+  .wrap-card{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:22px 24px;
+    box-shadow:var(--shadow-card); margin-top:12px;}
+  .owner{font-size:15px; color:var(--t2);}
+  .owner a{color:var(--accent); font-weight:700; text-decoration:none;}
+  .owner a:hover{text-decoration:underline;}
+
+  .gap-table{width:100%; border-collapse:collapse; margin-top:8px; font-size:14px; background:var(--card);
+    border:1px solid var(--line); border-radius:12px; overflow:hidden; box-shadow:var(--shadow-card);}
+  .gap-table th{text-align:left; font-size:15px; color:var(--t3); font-weight:700; padding:10px 14px;
+    border-bottom:1px solid var(--line); background:var(--card3);}
+  .gap-table td{padding:12px 14px; border-bottom:1px solid var(--line); vertical-align:top; color:var(--t1);}
+  .gap-table td.why{color:var(--t3); font-size:14px;}
+  .gap-table b{font-weight:700;}
+  .gap-table tr:last-child td{border-bottom:none;}
+  .tag{display:inline-block; font-size:14px; font-weight:800; white-space:nowrap;}
+  .tag-none{color:var(--t3);}
+  .tag-part{color:var(--caution);}
+
+  /* ---- 지금 할 일 요약 띠 ---- */
+  .todo{margin-top:22px; background:var(--card); border:1px solid var(--line); border-radius:12px;
+    padding:18px 20px; box-shadow:var(--shadow-card);}
+  .todo-first{font-size:17px; font-weight:800; color:var(--t1); display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;}
+  .todo-first .lead{font-size:14px; font-weight:800; color:var(--crisis); letter-spacing:.04em;}
+  .todo-steps{margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;}
+  .todo-step{font-size:14px; color:var(--t2); background:var(--card2); border:1px solid var(--line);
+    border-radius:999px; padding:6px 13px;}
+  .todo-step b{color:var(--t1); font-weight:800;}
+  .todo-counts{display:flex; gap:24px; margin-top:16px; padding-top:14px; border-top:1px solid var(--line); flex-wrap:wrap;}
+  .todo-c .v{font-size:22px; font-weight:800; letter-spacing:-.02em;}
+  .todo-c .k{font-size:14px; color:var(--t3); font-weight:700; margin-top:1px;}
+  .todo-c.do .v{color:var(--crisis);}
+  .todo-c.num .v{color:var(--caution);}
+  .todo-c.later .v{color:var(--t3);}
+
+  /* ---- 상태 배지 ---- */
+  .st{display:inline-block; font-size:14px; font-weight:800; white-space:nowrap;}
+  .st-do{color:var(--crisis);}
+  .st-num{color:var(--caution);}
+  .st-later{color:var(--t3);}
+  .sheet td.st-col{width:120px;}
+  .sheet td.made-in{color:var(--t2); font-size:14px; white-space:nowrap;}
+  .sheet td.why{color:var(--t3); font-size:14px;}
+  .sheet tr.row-later td.metric-name{color:var(--t3); font-weight:600;}
+
+  /* 물음표 버튼 — 긴 설명은 본문에 늘어놓지 않고 이 안에 넣습니다 */
+  .qwrap{display:inline;}
+  .qbtn{display:inline-flex; align-items:center; justify-content:center; width:23px; height:23px;
+    margin-left:6px; padding:0; border-radius:50%; border:1.5px solid rgba(138,134,128,.45); background:transparent;
+    color:var(--t3); font-size:14px; font-weight:800; line-height:1; cursor:pointer; font-family:inherit;
+    vertical-align:middle; animation:qpulse 2.6s ease-out infinite;}
+  .qbtn:hover{border-color:var(--accent); color:var(--accent);}
+  .qwrap.open .qbtn{background:var(--accent); border-color:var(--accent); color:#fff; animation:none;}
+  .grp-row .qbtn{border-color:rgba(255,255,255,.85); color:#fff; animation:qpulse-light 2.6s ease-out infinite;}
+  .grp-row .qwrap.open .qbtn{background:#fff; border-color:#fff; color:var(--accent); animation:none;}
+  @keyframes qpulse{
+    0%{box-shadow:0 0 0 0 rgba(92,102,114,.38);}
+    70%{box-shadow:0 0 0 6px rgba(92,102,114,0);}
+    100%{box-shadow:0 0 0 0 rgba(92,102,114,0);}
+  }
+  @keyframes qpulse-light{
+    0%{box-shadow:0 0 0 0 rgba(255,255,255,.55);}
+    70%{box-shadow:0 0 0 6px rgba(255,255,255,0);}
+    100%{box-shadow:0 0 0 0 rgba(255,255,255,0);}
+  }
+  .qtip{display:none;}
+  .qwrap.open .qtip{display:block; margin:8px 0 2px; background:var(--card2); border:1px solid var(--line);
+    border-left:3px solid var(--accent); border-radius:0 10px 10px 0; padding:10px 12px;
+    font-size:14px; color:var(--t2); line-height:1.7; font-weight:500; letter-spacing:0; text-transform:none;}
+  .grp-row .qwrap.open .qtip{color:var(--t2); background:var(--card);}
+
+  footer.foot{max-width:1080px; margin:26px auto 0; padding:0 20px; font-size:14px; color:var(--t3); text-align:center;}
+
+  @media (max-width:680px){
+    .sheet{font-size:14px;}
+    .sheet th, .sheet td{padding:9px 8px;}
+  }
+</style>
+
+<div class="wrap">
+  <a class="back" href="index.html">← 메인으로</a>
+
+  <div class="head">
+    <div class="eyebrow">비즈니스PT 6주차 · 콘텐츠 관리 시트</div>
+    <h1>콘텐츠 관리 시트</h1>
+    <div class="subtitle">강의가 쓰는 콘텐츠 관리 시트의 지표는 그대로 두고, 열만 주차 대신 대시보드로 바꾼 표입니다.<span class="qwrap"><button class="qbtn" type="button">?</button><span class="qtip">이 표는 매주 실제 숫자를 적어 넣는 관리시트가 아닙니다. 각 지표가 어느 대시보드에서 만들어지는지, 지금 무엇이 비어 있는지를 보여주는 지도입니다. 실제 숫자는 각 대시보드와 채널 성과 분석 화면에서 다룹니다.</span></span></div>
+  </div>
+
+  <div class="note">
+    <b>이 화면은 지표를 보는 곳이고, 뼈대가 아닙니다.</b> 제작 방법과 단계에 해당하는 뼈대는 아래 표가 가리키는 각 대시보드 안에 있습니다.
+    새 대시보드가 만들어지면 이 표의 해당 칸을 하나씩 채웁니다.<span class="qwrap"><button class="qbtn" type="button">?</button><span class="qtip">표의 줄은 콘텐츠 관리시트 원본과 같은 지표 이름이고, 열은 그 지표를 만들어 내는 대시보드입니다. 근거는 노션 「콘텐츠 관리 시트 사용법」이며, 2026-09-02에 직트님 확인을 거쳤습니다.</span></span>
+  </div>
+
+  <div class="todo">
+    <div class="todo-first"><span class="lead">가장 먼저</span> Shorts 대시보드 뼈대와 랜딩페이지, 둘이 없어서 다섯 칸이 막혀 있습니다.</div>
+    <div class="todo-steps">
+      <div class="todo-step"><b>1</b> Shorts 뼈대 조립 — 강의 대조 진행 중</div>
+      <div class="todo-step"><b>2</b> 랜딩페이지 만들기 — 키 판정의 전제</div>
+      <div class="todo-step"><b>3</b> 스튜디오 숫자 넣기 — 열두 칸이 한 번에 채워집니다</div>
+    </div>
+    <div class="todo-steps" style="margin-top:12px;">
+      <div class="todo-step"><a href="monetization.html" style="color:var(--accent);font-weight:800;text-decoration:none">수익화 기획 →</a> 이 표의 목표값(고객 한 명당 41만 9천원 · 월 780만원 · 풀링 57,000회)이 나온 곳입니다</div>
+    </div>
+    <div class="todo-counts">
+      <div class="todo-c do"><div class="v">5</div><div class="k">만들 것</div></div>
+      <div class="todo-c num"><div class="v">12</div><div class="k">숫자 넣을 것</div></div>
+      <div class="todo-c later"><div class="v">2</div><div class="k">뒤에 할 것</div></div>
+    </div>
+  </div>
+
+  <h2 class="section"><span class="n">1</span> 지표 사슬 — 풀링 콘텐츠 → 키 콘텐츠 → 랜딩 · 매출</h2>
+  <div class="section-desc">위에서 아래로 읽으면 제작 순서이고, 아래에서 위로 읽으면 2주차 수익화 기획의 역산 순서(목표 매출 → 객단가 → 필요 고객수 → 랜딩페이지 접속수 → 키 콘텐츠 조회수 → 풀링 콘텐츠 조회수)와 같습니다.</div>
+
+  <table class="sheet">
+    <thead>
+      <tr>
+        <th style="width:14%;">상태 — 무엇을</th>
+        <th style="width:24%;">지표 — 얼마나</th>
+        <th style="width:22%;">만드는 곳</th>
+        <th style="width:40%;">왜 — 지금 조건</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="grp-row"><td colspan="4">① 풀링 콘텐츠 — 친해지는 콘텐츠<span class="qwrap"><button class="qbtn" type="button">?</button><span class="qtip">시청자를 잠재고객으로 만드는 콘텐츠입니다. 같은 결의 문제에 관심 있는 사람을 평소에 모아 두는 역할이며, 키 콘텐츠와의 차이는 썸네일이 아니라 원고 안의 내용에 있습니다. 계속 파는 콘텐츠만 올리면 시청자가 떠나기 때문에 친해지는 콘텐츠 4편에 판매 콘텐츠 1편, 즉 키 연계율 20%로 배치합니다. (2주차 1강)</span></span></td></tr>
+      <tr><td class="st-col"><span class="st st-do">만들 것</span></td><td class="metric-name">Shorts 조회수</td><td class="made-in">Shorts</td><td class="why">Shorts 대시보드 뼈대부터 만들어야 잽니다</td></tr>
+      <tr><td class="st-col"><span class="st st-num">숫자 넣을 것</span></td><td class="metric-name">조회수</td><td class="made-in">Shorts · 미드폼·롱폼</td><td class="why">유튜브 스튜디오 값을 넣으면 됩니다</td></tr>
+      <tr><td class="st-col"><span class="st st-num">숫자 넣을 것</span></td><td class="metric-name">구독자 증가수</td><td class="made-in">Shorts · 미드폼·롱폼</td><td class="why">유튜브 스튜디오 값을 넣으면 됩니다</td></tr>
+      <tr><td class="st-col"><span class="st st-num">숫자 넣을 것</span></td><td class="metric-name">구독 전환율</td><td class="made-in">Shorts · 미드폼·롱폼</td><td class="why">유튜브 스튜디오 값을 넣으면 됩니다</td></tr>
+      <tr><td class="st-col"><span class="st st-num">숫자 넣을 것</span></td><td class="metric-name">시청 지속시간</td><td class="made-in">Shorts · 미드폼·롱폼</td><td class="why">유튜브 스튜디오 값을 넣으면 됩니다</td></tr>
+      <tr><td class="st-col"><span class="st st-num">숫자 넣을 것</span></td><td class="metric-name">클릭률</td><td class="made-in">Shorts · 미드폼·롱폼</td><td class="why">유튜브 스튜디오 값을 넣으면 됩니다</td></tr>
+      <tr><td class="st-col"><span class="st st-num">숫자 넣을 것</span></td><td class="metric-name">탐색 유입</td><td class="made-in">Shorts · 미드폼·롱폼</td><td class="why">유튜브 스튜디오 값을 넣으면 됩니다</td></tr>
+      <tr class="arrow-row"><td colspan="4">↓ 풀링 콘텐츠 시청자 중 일부가 키 콘텐츠로 넘어갑니다 · 키 연계율 20%</td></tr>
+      <tr class="grp-row"><td colspan="4">② 키 콘텐츠 — 판매하는 콘텐츠<span class="qwrap"><button class="qbtn" type="button">?</button><span class="qtip">잠재고객을 구매자로 만드는 콘텐츠입니다. 내 상품이 해결할 수 있는 문제를 다루고, 그 문제에 공감한 사람이 솔루션에 공감할 때 구매가 일어납니다. 장점을 나열하는 것은 키 콘텐츠가 아닙니다. 판정은 조회수가 아니라 랜딩 유입량으로 합니다. (2주차 1강, 3주차)</span></span></td></tr>
+      <tr><td class="st-col"><span class="st st-num">숫자 넣을 것</span></td><td class="metric-name">조회수</td><td class="made-in">미드폼·롱폼</td><td class="why">유튜브 스튜디오 값을 넣으면 됩니다</td></tr>
+      <tr><td class="st-col"><span class="st st-num">숫자 넣을 것</span></td><td class="metric-name">연계율</td><td class="made-in">미드폼·롱폼</td><td class="why">유튜브 스튜디오 값을 넣으면 됩니다</td></tr>
+      <tr><td class="st-col"><span class="st st-num">숫자 넣을 것</span></td><td class="metric-name">시청 지속시간</td><td class="made-in">미드폼·롱폼</td><td class="why">유튜브 스튜디오 값을 넣으면 됩니다</td></tr>
+      <tr><td class="st-col"><span class="st st-num">숫자 넣을 것</span></td><td class="metric-name">클릭률</td><td class="made-in">미드폼·롱폼</td><td class="why">유튜브 스튜디오 값을 넣으면 됩니다</td></tr>
+      <tr><td class="st-col"><span class="st st-num">숫자 넣을 것</span></td><td class="metric-name">검색 유입</td><td class="made-in">미드폼·롱폼</td><td class="why">유튜브 스튜디오 값을 넣으면 됩니다</td></tr>
+      <tr><td class="st-col"><span class="st st-num">숫자 넣을 것</span></td><td class="metric-name">페이지 유입</td><td class="made-in">미드폼·롱폼</td><td class="why">유튜브 스튜디오 값을 넣으면 됩니다</td></tr>
+      <tr class="arrow-row"><td colspan="4">↓ 고정댓글을 거쳐 랜딩페이지로 넘어갑니다</td></tr>
+      <tr class="grp-row"><td colspan="4">③ 랜딩페이지 · 매출 — 매출 = 객단가 × 유료 고객수<span class="qwrap"><button class="qbtn" type="button">?</button><span class="qtip">랜딩페이지는 결제가 붙어 있거나 연락처가 있는 페이지, 즉 최종적으로 목표하는 행위를 할 수 있는 페이지를 말합니다. 객단가가 정해져야 필요 고객수가 정해지고, 그래야 랜딩 접속수와 필요 조회수가 역산됩니다. 목표 객단가 기준선은 25만원입니다. (2주차 1강·2강)</span></span></td></tr>
+      <tr><td class="st-col"><span class="st st-do">만들 것</span></td><td class="metric-name">랜딩페이지 접속수</td><td class="made-in">—</td><td class="why">랜딩페이지가 없습니다. 만들어야 잽니다</td></tr>
+      <tr><td class="st-col"><span class="st st-do">만들 것</span></td><td class="metric-name">링크 클릭률</td><td class="made-in">—</td><td class="why">랜딩페이지와 단축 링크가 있어야 잽니다</td></tr>
+      <tr><td class="st-col"><span class="st st-do">만들 것</span></td><td class="metric-name">무료 고객수 · 전환율</td><td class="made-in">—</td><td class="why">랜딩페이지가 있어야 셉니다</td></tr>
+      <tr><td class="st-col"><span class="st st-do">만들 것</span></td><td class="metric-name">유료 고객수 · 전환율</td><td class="made-in">—</td><td class="why">랜딩페이지가 있어야 셉니다</td></tr>
+      <tr class="row-later"><td class="st-col"><span class="st st-later">뒤에 할 것</span></td><td class="metric-name">매출</td><td class="made-in">미드폼·롱폼</td><td class="why">목표값은 역산표에 있습니다. 실측은 판매가 일어난 뒤입니다</td></tr>
+      <tr class="row-later"><td class="st-col"><span class="st st-later">뒤에 할 것</span></td><td class="metric-name">마진</td><td class="made-in">—</td><td class="why">매출 실측이 있어야 계산합니다</td></tr>
+    </tbody>
+  </table>
+
+  <h2 class="section"><span class="n">2</span> 세 대시보드와 별개로 공통으로 보는 지표</h2>
+  <div class="section-desc">위 표와는 축이 다릅니다. 위 표가 지표 사슬이라면, 이 화면은 영상 71편 각각의 성적표입니다.</div>
+  <div class="wrap-card">
+    <div class="owner">
+      <a href="performance.html">채널 성과 분석</a> — 영상별 클릭률과 시청 지속률, 확정 기준 통과 여부를 봅니다.<span class="qwrap"><button class="qbtn" type="button">?</button><span class="qtip">확정 기준은 11주차 관문 11의 지표 네 가지입니다. 클릭률 10% 이상, 초반 유지율 60% 정도, 평균 시청 지속시간 4분대, 평균 조회율 35% 이상. 조회수는 판정 기준이 아닙니다. 이 화면은 2026-08-30에 28일 데이터로 처음 실행했습니다.</span></span>
+    </div>
+  </div>
+
+  <h2 class="section"><span class="n">3</span> 지금 비어 있는 칸</h2>
+  <div class="section-desc">다음에 만들거나 채워야 할 것입니다.</div>
+  <table class="gap-table">
+    <tr><th style="width:14%;">상태</th><th style="width:28%;">무엇이 비어 있는가</th><th>왜 — 근거</th></tr>
+    <tr><td><span class="st st-do">만들 것</span></td><td><b>Shorts 대시보드 안쪽 뼈대</b></td><td class="why">비즈니스PT 강의를 2주차부터 대조하며 조립하고 있습니다. 2026-09-02 착수했습니다.</td></tr>
+    <tr><td><span class="st st-do">만들 것</span></td><td><b>랜딩페이지 접속수 · 링크 클릭률</b></td><td class="why">랜딩페이지가 아직 없습니다. 만들어야 측정할 수 있습니다.<span class="qwrap"><button class="qbtn" type="button">?</button><span class="qtip">키 콘텐츠 판정은 조회수가 아니라 랜딩 유입량으로 하기 때문에, 랜딩페이지와 단축 링크가 없으면 판정 자체가 불가능합니다. 근거 자료는 02번 서랍 16항입니다.</span></span></td></tr>
+    <tr><td><span class="st st-do">만들 것</span></td><td><b>상품 시장성 검증 실측값</b></td><td class="why">객단가, 월간 매출액, 뷰트랩 조회수 합계를 2주차 실행강의 5단계로 검증한 기록이 없습니다. 미드폼·롱폼 대시보드 1층에 빈칸으로 올려 두었습니다.</td></tr>
+    <tr><td><span class="st st-num">숫자 넣을 것</span></td><td><b>풀링 콘텐츠 · 키 콘텐츠의 실제 조회수와 클릭률</b></td><td class="why">유튜브 스튜디오 데이터를 이 화면에 직접 연결하는 장치가 아직 없습니다. 현재는 수기로만 확인할 수 있습니다.</td></tr>
+    <tr><td><span class="st st-later">뒤에 할 것</span></td><td><b>매출 · 마진 실측</b></td><td class="why">목표 매출 역산표는 직트님이 확정한 목표값이며 실제 발생한 매출이 아닙니다.</td></tr>
+  </table>
+
+  <div class="note" style="margin-top:28px;">
+    <b>새 대시보드를 만들 때마다</b> 위 표의 해당 칸에 점을 찍고 상태를 바꿉니다. 이 화면은 새 대시보드가 생길 때마다 같이 갱신합니다.
+  </div>
+</div>
+
+<footer class="foot">직트 유튜브 운영 시스템 — 콘텐츠 관리 시트. 강의가 쓰는 시트의 지표를 그대로 두고, 열만 주차 대신 대시보드로 바꾼 표입니다.</footer>
+
+<script>
+(function(){
+  document.querySelectorAll('.qbtn').forEach(function(b){
+    b.onclick = function(ev){ ev.stopPropagation(); this.parentNode.classList.toggle('open'); };
+  });
+})();
+</script>

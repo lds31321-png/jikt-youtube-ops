@@ -1,0 +1,295 @@
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+<title>직트 유튜브 운영 시스템 — 결 정의</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  :root{
+    --t1:#1a1816; --t2:#4a4440; --t3:#7a736e;
+    --card:#ffffff; --card2:#faf7f4; --card3:#f3efe9;
+    --line:rgba(0,0,0,.07);
+    --accent:#5C6672; --crisis:#C0504D; --caution:#B7791F;
+    --accent-grad:linear-gradient(135deg,#8E99A8 0%,#5C6672 55%,#454E5C 100%);
+    --bg:#EAE7E1; --shadow-card:0 2px 8px rgba(0,0,0,.05);
+    --badge-shadow:0 3px 8px rgba(92,102,114,.30);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg); color:var(--t1);
+    font-family:'Pretendard','Noto Sans KR',-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+    line-height:1.55; font-size:15px; font-weight:500; font-variant-numeric:tabular-nums;}
+  .wrap{max-width:1080px; margin:0 auto; padding:34px 20px 60px;}
+  .back{display:inline-flex; align-items:center; gap:6px; font-size:15px; font-weight:700; color:var(--accent);
+    text-decoration:none; margin-bottom:18px; background:var(--card); border:1px solid var(--line);
+    border-radius:10px; padding:9px 16px; transition:background .15s,color .15s;}
+  .back:hover{background:var(--accent); color:#fff; border-color:var(--accent);}
+  .head{display:flex; align-items:baseline; justify-content:space-between; gap:14px; flex-wrap:wrap;}
+  h1{font-size:26px; margin:0; font-weight:800; letter-spacing:-.012em;}
+  .head .src-note{font-size:14px; color:var(--t3);}
+
+  h2.section{font-size:17px; font-weight:800; margin:34px 0 10px; display:flex; align-items:center; gap:8px;}
+  h2.section .n{width:22px; height:22px; border-radius:50%; background:var(--accent-grad); color:#fff; font-size:14px;
+    display:flex; align-items:center; justify-content:center; font-weight:800; flex:0 0 auto; box-shadow:var(--badge-shadow);}
+
+  .card{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px 20px; box-shadow:var(--shadow-card);}
+
+  table.sheet{width:100%; border-collapse:collapse; background:var(--card); border:1px solid var(--line);
+    border-radius:12px; overflow:hidden; box-shadow:var(--shadow-card); font-size:15px;}
+  .sheet th,.sheet td{padding:9px 12px; border-bottom:1px solid var(--line); border-right:1px solid var(--line); text-align:left; vertical-align:middle;}
+  .sheet th:last-child,.sheet td:last-child{border-right:none;}
+  .sheet thead th{background:var(--card3); font-size:15px; color:var(--t2); font-weight:700;}
+  .sheet tbody tr:last-child td{border-bottom:none;}
+  .sheet input[type=text]{width:100%; font-family:inherit; font-size:15px; color:var(--t1); background:transparent;
+    border:1px solid transparent; border-radius:7px; padding:7px 8px;}
+  .sheet input[type=text]:focus{outline:none; border-color:var(--accent); background:var(--card2);}
+  .sheet input[type=number]{width:64px; font-family:inherit; font-size:15px; font-weight:700; text-align:right;
+    background:var(--card2); border:1px solid var(--line); border-radius:7px; padding:6px 8px;}
+  .sheet select{font-family:inherit; font-size:15px; background:var(--card2); border:1px solid var(--line);
+    border-radius:7px; padding:6px 8px; color:var(--t1);}
+  .sheet td.score{font-weight:800; text-align:right; white-space:nowrap;}
+  .sheet td.rank{font-weight:800; text-align:center; width:44px; color:var(--t1);}
+  .rowdel{border:none; background:none; color:var(--t3); font-size:15px; cursor:pointer; padding:4px 6px;}
+  .rowdel:hover{color:var(--crisis);}
+
+  button.btn{font-family:inherit; font-size:14px; font-weight:700; color:var(--accent); background:var(--card);
+    border:1px solid var(--line); border-radius:9px; padding:9px 15px; cursor:pointer;}
+  button.btn:hover{background:var(--accent); color:#fff; border-color:var(--accent);}
+  button.btn.primary{background:var(--accent); color:#fff; border-color:var(--accent);}
+  button.btn.primary:hover{filter:brightness(1.08);}
+  .actions{display:flex; gap:10px; margin-top:12px; flex-wrap:wrap; align-items:center;}
+  .saved{font-size:14px; color:var(--t3);}
+
+  .out{background:var(--card2); border:1px solid var(--line); border-left:3px solid var(--accent);
+    border-radius:0 12px 12px 0; padding:16px 18px; margin-top:12px; font-size:15px; color:var(--t2);}
+  .out b{color:var(--t1);}
+  .out .big{font-size:19px; font-weight:800; color:var(--t1);}
+  .out ol{margin:8px 0 0; padding-left:20px;}
+  .out ol li{margin:4px 0;}
+  .copy{float:right;}
+
+  .final input{width:100%; font-family:inherit; font-size:17px; font-weight:700; color:var(--t1);
+    background:var(--card2); border:1px solid var(--line); border-radius:9px; padding:12px 14px;}
+  .final input:focus{outline:none; border-color:var(--accent); background:#fff;}
+
+  .qwrap{display:inline;}
+  .qbtn{display:inline-flex; align-items:center; justify-content:center; width:23px; height:23px;
+    margin-left:6px; padding:0; border-radius:50%; border:1.5px solid rgba(138,134,128,.45); background:transparent;
+    color:var(--t3); font-size:14px; font-weight:800; line-height:1; cursor:pointer; font-family:inherit; vertical-align:middle;}
+  .qbtn:hover{border-color:var(--accent); color:var(--accent);}
+  .qwrap.open .qbtn{background:var(--accent); border-color:var(--accent); color:#fff;}
+  .qtip{display:none;}
+  .qwrap.open .qtip{display:block; margin:8px 0 2px; background:var(--card2); border:1px solid var(--line);
+    border-left:3px solid var(--accent); border-radius:0 10px 10px 0; padding:10px 12px; font-size:14px; color:var(--t2); line-height:1.7; font-weight:500;}
+
+  .nav{display:flex; gap:10px; flex-wrap:wrap; margin-top:16px;}
+  .nav a{font-size:14px; font-weight:700; color:var(--accent); text-decoration:none; background:var(--card);
+    border:1px solid var(--line); border-radius:999px; padding:8px 15px;}
+  .nav a:hover{border-color:var(--accent);}
+  footer.foot{max-width:1080px; margin:26px auto 0; padding:0 20px; font-size:14px; color:var(--t3); text-align:center;}
+</style>
+
+<div class="wrap">
+  <a class="back" href="index.html">← 메인으로</a>
+
+  <div class="head">
+    <h1>결 정의</h1>
+    <div class="src-note">비즈니스PT 2·3주차 실행강의 · 안내판 2층 · 값은 이 컴퓨터에 저장됩니다</div>
+  </div>
+
+  <h2 class="section"><span class="n">1</span> 문제를 적고, 어느 가치인지 고르고, 몇 번 나왔는지 셉니다<span class="qwrap"><button class="qbtn" type="button">?</button><span class="qtip">실행강의 절차입니다. ① 문제 서치 — 희망과 걱정 두 방향으로 모읍니다. 질문 세 개: 살 때 기대하는 것은 무엇인가, 원하는 것은 무엇인가, 사기 전에 걱정되는 것은 무엇인가. 수집처는 뷰트랩 댓글, 강의 플랫폼 후기, 경쟁 랜딩페이지입니다. ② 아이템 특징 분석 — 돈·시간·건강·이성·가족·관계·사회적 의미 일곱 칸에 나눠 담습니다. ③ 교집합 — 겹치는 지점을 빈도 × 중요도 순으로 정렬합니다.</span></span></h2>
+
+  <table class="sheet" id="tbl">
+    <thead><tr>
+      <th style="width:46%">시청자가 겪는 문제</th>
+      <th style="width:16%">가치 칸</th>
+      <th style="width:12%">빈도</th>
+      <th style="width:12%">중요도</th>
+      <th style="width:10%">점수</th>
+      <th style="width:4%"></th>
+    </tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+  <div class="actions">
+    <button class="btn" id="addRow">줄 추가</button>
+    <button class="btn primary" id="sortBtn">점수순으로 정렬</button>
+    <button class="btn" id="seedBtn">직트 자료로 채우기</button>
+    <span class="saved" id="savedMsg"></span>
+  </div>
+
+  <h2 class="section"><span class="n">2</span> 자동으로 나오는 것</h2>
+  <div class="out" id="out1"></div>
+  <div class="out" id="out2"></div>
+  <div class="out" id="out3"></div>
+
+  <h2 class="section"><span class="n">3</span> 핵심 문제 한 문장<span class="qwrap"><button class="qbtn" type="button">?</button><span class="qtip">풀링 콘텐츠, 키 콘텐츠, 고정댓글, 랜딩페이지가 모두 이 한 문장에 맞춰집니다. 핵심 문제를 잡지 못하면 랜딩페이지를 쓸 수 없습니다. 그 핵심 문제는 교집합에 있습니다. 여기서 확정한 문장은 다른 화면들이 가져다 씁니다.</span></span></h2>
+  <div class="card final">
+    <input id="oneline" type="text" placeholder="1위 문제를 시청자의 말로 한 문장으로 적습니다">
+    <div class="actions">
+      <button class="btn" id="fromTop">1위 문제로 채우기</button>
+      <button class="btn" id="copyOne">문장 복사</button>
+      <span class="saved" id="oneMsg"></span>
+    </div>
+  </div>
+
+  <div class="nav">
+    <a href="monetization.html">수익화 기획</a>
+    <a href="control_panel.html">콘텐츠 관리 시트</a>
+    <a href="dashboard.html?layer=2">미드폼·롱폼 2층 — 강의 원문 절차</a>
+  </div>
+</div>
+
+<footer class="foot">직트 유튜브 운영 시스템 — 결 정의. 입력값은 이 컴퓨터의 브라우저에 저장되며 파일 자체는 바뀌지 않습니다.</footer>
+
+<script>
+(function(){
+  var KEY='jikt_gyeol_v1';
+  var VALUES=['돈','시간','건강','이성','가족','관계','사회적 의미'];
+  // 02번 §11 — 직트가 이미 확정해 둔 일곱 가치 순위. 중요도 기본값으로 씁니다.
+  var VW={'돈':7,'시간':6,'건강':5,'이성':4,'가족':3,'관계':2,'사회적 의미':1};
+  var SEED=[
+    ['제대로 된 전문가와 교육 프로그램을 찾기가 쉽지 않다','사회적 의미',5],
+    ['조작이 아니라 실제로 가치를 입증하는 전문가인지 검증하기 어렵다','사회적 의미',5],
+    ['교육받은 사람들이 장기간 꾸준히 수익을 내는지 확인할 방법이 없다','돈',6],
+    ['적은 자본으로 월급만큼의 현금 흐름을 만들고 싶다','돈',9],
+    ['이자로는 16억이 필요한데 그 돈이 없다','돈',7],
+    ['경제적 자유까지 걸리는 시간이 너무 길다','시간',8],
+    ['일과 투자를 병행하기 어렵다','시간',6],
+    ['손실이 무서워 시작을 못 한다','건강',5],
+    ['감으로 하고 있어 잘돼도 불안하다','건강',4],
+    ['남들보다 뒤처지는 것 같다','관계',4]
+  ];
+
+  var $=function(s){return document.querySelector(s);};
+  var rows=$('#rows');
+
+  function makeRow(text,val,freq,imp){
+    var tr=document.createElement('tr');
+    var opts=VALUES.map(function(v){return '<option'+(v===val?' selected':'')+'>'+v+'</option>';}).join('');
+    tr.innerHTML =
+      '<td><input type="text" class="c-text" value="'+(text||'').replace(/"/g,'&quot;')+'" placeholder="시청자가 겪는 문제를 그대로 적습니다"></td>'+
+      '<td><select class="c-val">'+opts+'</select></td>'+
+      '<td><input type="number" class="c-freq" min="0" step="1" value="'+(freq||0)+'"></td>'+
+      '<td><input type="number" class="c-imp" min="1" max="7" step="1" value="'+(imp||VW[val]||4)+'"></td>'+
+      '<td class="score">0</td>'+
+      '<td><button class="rowdel" title="줄 삭제">✕</button></td>';
+    rows.appendChild(tr);
+    bind(tr);
+    return tr;
+  }
+  function bind(tr){
+    tr.querySelectorAll('input,select').forEach(function(el){
+      el.addEventListener('input', function(){
+        if(el.classList.contains('c-val')){
+          var imp=tr.querySelector('.c-imp'); imp.value = VW[el.value]||4;
+        }
+        calc();
+      });
+    });
+    tr.querySelector('.rowdel').onclick=function(){ tr.remove(); calc(); };
+  }
+
+  function data(){
+    return Array.prototype.map.call(rows.children, function(tr){
+      return {
+        text: tr.querySelector('.c-text').value.trim(),
+        val: tr.querySelector('.c-val').value,
+        freq: +tr.querySelector('.c-freq').value||0,
+        imp: +tr.querySelector('.c-imp').value||0,
+        tr: tr
+      };
+    });
+  }
+
+  function calc(){
+    var d=data();
+    d.forEach(function(r){ r.score = r.freq * r.imp; r.tr.querySelector('.score').textContent = r.score; });
+    var filled = d.filter(function(r){ return r.text; }).sort(function(a,b){ return b.score-a.score; });
+
+    if(!filled.length){
+      $('#out1').innerHTML='문제를 한 줄이라도 적으면 여기에 결과가 나옵니다.';
+      $('#out2').innerHTML=''; $('#out3').innerHTML='';
+      save(); return;
+    }
+    var top=filled[0];
+    // 가치 칸별 합계
+    var byVal={};
+    filled.forEach(function(r){ byVal[r.val]=(byVal[r.val]||0)+r.score; });
+    var valRank=Object.keys(byVal).sort(function(a,b){return byVal[b]-byVal[a];});
+
+    $('#out1').innerHTML =
+      '<b>1위 문제 — 고정댓글 문구는 이 문제로 씁니다</b>'+
+      '<button class="btn copy" data-copy="'+esc(top.text)+'">복사</button>'+
+      '<div class="big" style="margin-top:8px">'+esc(top.text)+'</div>'+
+      '<div style="margin-top:6px; font-size:14px; color:var(--t3)">가치 칸 '+top.val+' · 빈도 '+top.freq+' × 중요도 '+top.imp+' = '+top.score+'점</div>'+
+      '<span class="qwrap"><button class="qbtn" type="button">?</button><span class="qtip">고정댓글은 두 조각입니다. 후킹(아 내 얘기구나)과 문제(교집합 1위). 구조는 「이거 니 얘기잖아 → 너 이거 문제지 → 내가 해결해 줄게」입니다. 제품 인지가 아니라 욕구 인지로 씁니다.</span></span>';
+
+    $('#out2').innerHTML =
+      '<b>랜딩페이지 배치 순서 — 이 순서 그대로 씁니다</b>'+
+      '<ol>'+filled.slice(0,7).map(function(r){ return '<li>'+esc(r.text)+' <span style="color:var(--t3);font-size:14px">('+r.val+' · '+r.score+'점)</span></li>'; }).join('')+'</ol>'+
+      '<div style="margin-top:8px; font-size:14px; color:var(--t3)">가치 칸 순위 — '+valRank.map(function(v){return v+' '+byVal[v];}).join(' · ')+'</div>';
+
+    $('#out3').innerHTML =
+      '<b>영상 소재 후보 — 각 문제가 한 편씩입니다</b>'+
+      '<ol>'+filled.slice(0,10).map(function(r){ return '<li>'+esc(r.text)+'</li>'; }).join('')+'</ol>'+
+      '<div style="margin-top:8px; font-size:14px; color:var(--t3)">한 표에서 세 가지가 동시에 나오면 통과입니다 — 1위는 고정댓글, 전체 순서는 랜딩 배치, 각 항목은 영상 소재.</div>';
+
+    hookCopy(); hookQ(); save();
+  }
+  function esc(s){ return String(s).replace(/[<>&"]/g,function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c];}); }
+
+  function hookCopy(){
+    document.querySelectorAll('[data-copy]').forEach(function(b){
+      b.onclick=function(){
+        var t=b.getAttribute('data-copy');
+        navigator.clipboard && navigator.clipboard.writeText(t);
+        b.textContent='복사됨'; setTimeout(function(){b.textContent='복사';},1200);
+      };
+    });
+  }
+  function hookQ(){
+    document.querySelectorAll('.qbtn').forEach(function(b){
+      b.onclick=function(ev){ ev.stopPropagation(); this.parentNode.classList.toggle('open'); };
+    });
+  }
+
+  function save(){
+    var d={rows:data().map(function(r){return [r.text,r.val,r.freq,r.imp];}), one:$('#oneline').value};
+    var t=new Date();
+    d.savedAt=(t.getMonth()+1)+'/'+t.getDate()+' '+String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0');
+    try{ localStorage.setItem(KEY, JSON.stringify(d)); $('#savedMsg').textContent='저장됨 · '+d.savedAt; }catch(e){}
+  }
+  function load(){
+    var d=null;
+    try{ d=JSON.parse(localStorage.getItem(KEY)||'null'); }catch(e){}
+    if(d && d.rows && d.rows.length){
+      d.rows.forEach(function(r){ makeRow(r[0],r[1],r[2],r[3]); });
+      $('#oneline').value = d.one||'';
+      if(d.savedAt) $('#savedMsg').textContent='저장됨 · '+d.savedAt;
+    } else {
+      SEED.forEach(function(r){ makeRow(r[0],r[1],r[2],VW[r[1]]); });
+    }
+  }
+
+  $('#addRow').onclick=function(){ makeRow('','돈',0,7); calc(); };
+  $('#sortBtn').onclick=function(){
+    var d=data().filter(function(r){return r.text;}).sort(function(a,b){return b.score-a.score;});
+    var empty=data().filter(function(r){return !r.text;});
+    d.concat(empty).forEach(function(r){ rows.appendChild(r.tr); });
+    calc();
+  };
+  $('#seedBtn').onclick=function(){
+    if(!confirm('지금 표를 지우고 직트 자료(02번 서랍 일곱 가치·시트29 무료상품)로 다시 채웁니다.')) return;
+    rows.innerHTML=''; SEED.forEach(function(r){ makeRow(r[0],r[1],r[2],VW[r[1]]); }); calc();
+  };
+  $('#fromTop').onclick=function(){
+    var d=data().filter(function(r){return r.text;}).sort(function(a,b){return b.score-a.score;});
+    if(d.length){ $('#oneline').value=d[0].text; save(); $('#oneMsg').textContent='1위 문제를 넣었습니다. 시청자의 말로 다듬으십시오.'; }
+  };
+  $('#copyOne').onclick=function(){
+    var t=$('#oneline').value;
+    navigator.clipboard && navigator.clipboard.writeText(t);
+    $('#oneMsg').textContent='복사했습니다.';
+  };
+  $('#oneline').addEventListener('input', save);
+
+  load(); calc();
+})();
+</script>

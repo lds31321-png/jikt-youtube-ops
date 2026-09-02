@@ -1,0 +1,397 @@
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+<title>직트 유튜브 운영 시스템 — 키 콘텐츠 기획</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  :root{
+    --t1:#1a1816; --t2:#4a4440; --t3:#7a736e;
+    --card:#ffffff; --card2:#faf7f4; --card3:#f3efe9;
+    --line:rgba(0,0,0,.07); --accent:#5C6672; --crisis:#C0504D; --caution:#B7791F;
+    --accent-grad:linear-gradient(135deg,#8E99A8 0%,#5C6672 55%,#454E5C 100%);
+    --bg:#EAE7E1; --shadow-card:0 2px 8px rgba(0,0,0,.05); --badge-shadow:0 3px 8px rgba(92,102,114,.30);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg); color:var(--t1);
+    font-family:'Pretendard','Noto Sans KR',-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+    line-height:1.55; font-size:15px; font-weight:500; font-variant-numeric:tabular-nums;}
+  .wrap{max-width:1080px; margin:0 auto; padding:34px 20px 60px;}
+  .back{display:inline-flex; align-items:center; gap:6px; font-size:15px; font-weight:700; color:var(--accent);
+    text-decoration:none; margin-bottom:18px; background:var(--card); border:1px solid var(--line);
+    border-radius:10px; padding:9px 16px; transition:background .15s,color .15s;}
+  .back:hover{background:var(--accent); color:#fff; border-color:var(--accent);}
+  .head{display:flex; align-items:baseline; justify-content:space-between; gap:14px; flex-wrap:wrap;}
+  h1{font-size:26px; margin:0; font-weight:800; letter-spacing:-.012em;}
+  .head .src-note{font-size:14px; color:var(--t3);}
+
+  h2.section{font-size:17px; font-weight:800; margin:34px 0 10px; display:flex; align-items:center; gap:8px;}
+  h2.section .n{width:22px; height:22px; border-radius:50%; background:var(--accent-grad); color:#fff; font-size:14px;
+    display:flex; align-items:center; justify-content:center; font-weight:800; flex:0 0 auto; box-shadow:var(--badge-shadow);}
+
+  .card{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px 20px; box-shadow:var(--shadow-card);}
+  table.sheet{width:100%; border-collapse:collapse; background:var(--card); border:1px solid var(--line);
+    border-radius:12px; overflow:hidden; box-shadow:var(--shadow-card); font-size:15px;}
+  .sheet th,.sheet td{padding:10px 12px; border-bottom:1px solid var(--line); border-right:1px solid var(--line); text-align:left; vertical-align:top;}
+  .sheet th:last-child,.sheet td:last-child{border-right:none;}
+  .sheet thead th{background:var(--card3); font-size:15px; color:var(--t2); font-weight:700;}
+  .sheet tbody tr:last-child td{border-bottom:none;}
+  .sheet td.k{font-weight:700; color:var(--t1); white-space:nowrap;}
+  .sheet textarea, .sheet input[type=text]{width:100%; font-family:inherit; font-size:15px; color:var(--t1);
+    background:var(--card2); border:1px solid var(--line); border-radius:8px; padding:8px 10px; resize:vertical;}
+  .sheet textarea:focus, .sheet input:focus{outline:none; border-color:var(--accent); background:#fff;}
+  .sheet input[type=number]{width:110px; font-family:inherit; font-size:15px; font-weight:700; text-align:right;
+    background:var(--card2); border:1px solid var(--line); border-radius:8px; padding:7px 9px;}
+
+  button.btn{font-family:inherit; font-size:14px; font-weight:700; color:var(--accent); background:var(--card);
+    border:1px solid var(--line); border-radius:9px; padding:9px 15px; cursor:pointer;}
+  button.btn:hover{background:var(--accent); color:#fff; border-color:var(--accent);}
+  .actions{display:flex; gap:10px; margin-top:12px; flex-wrap:wrap; align-items:center;}
+  .saved{font-size:14px; color:var(--t3);}
+
+  .out{background:var(--card2); border:1px solid var(--line); border-left:3px solid var(--accent);
+    border-radius:0 12px 12px 0; padding:15px 17px; margin-top:12px; font-size:15px; color:var(--t2);}
+  .out b{color:var(--t1);} .out .big{font-size:18px; font-weight:800; color:var(--t1);}
+  .ok{color:var(--accent); font-weight:800;} .no{color:var(--crisis); font-weight:800;} .mid{color:var(--caution); font-weight:800;}
+
+  .chk{display:flex; align-items:flex-start; gap:10px; padding:10px 0; border-bottom:1px solid var(--line);}
+  .chk:last-child{border-bottom:none;}
+  .chk input{width:19px; height:19px; margin-top:2px; accent-color:var(--accent); cursor:pointer; flex:0 0 auto;}
+  .chk .t{font-weight:700;} .chk .d{font-size:14px; color:var(--t3); margin-top:2px;}
+  .chk.on .t{color:var(--crisis);}
+
+  .stage{display:flex; gap:8px; flex-wrap:wrap; margin:10px 0 0;}
+  .stage label{font-size:14px; font-weight:700; color:var(--t2); background:var(--card2); border:1px solid var(--line);
+    border-radius:999px; padding:8px 14px; cursor:pointer;}
+  .stage input{display:none;}
+  .stage input:checked + span{color:#fff;}
+  .stage label:has(input:checked){background:var(--accent); border-color:var(--accent); color:#fff;}
+
+  .qwrap{display:inline;}
+  .qbtn{display:inline-flex; align-items:center; justify-content:center; width:23px; height:23px;
+    margin-left:6px; padding:0; border-radius:50%; border:1.5px solid rgba(138,134,128,.45); background:transparent;
+    color:var(--t3); font-size:14px; font-weight:800; line-height:1; cursor:pointer; font-family:inherit; vertical-align:middle;}
+  .qbtn:hover{border-color:var(--accent); color:var(--accent);}
+  .qwrap.open .qbtn{background:var(--accent); border-color:var(--accent); color:#fff;}
+  .qtip{display:none;}
+  .qwrap.open .qtip{display:block; margin:8px 0 2px; background:var(--card2); border:1px solid var(--line);
+    border-left:3px solid var(--accent); border-radius:0 10px 10px 0; padding:10px 12px; font-size:14px; color:var(--t2); line-height:1.7; font-weight:500;}
+
+  .nav{display:flex; gap:10px; flex-wrap:wrap; margin-top:16px;}
+  .nav a{font-size:14px; font-weight:700; color:var(--accent); text-decoration:none; background:var(--card);
+    border:1px solid var(--line); border-radius:999px; padding:8px 15px;}
+  .nav a:hover{border-color:var(--accent);}
+  footer.foot{max-width:1080px; margin:26px auto 0; padding:0 20px; font-size:14px; color:var(--t3); text-align:center;}
+</style>
+
+<div class="wrap">
+  <a class="back" href="index.html">← 메인으로</a>
+  <div class="head">
+    <h1>키 콘텐츠 기획</h1>
+    <div class="src-note">비즈니스PT 3주차 본강의 + 3주차 실행강의 · 안내판 3층 · 값은 이 컴퓨터에 저장됩니다</div>
+  </div>
+
+  <h2 class="section"><span class="n">1</span> 구매 5단계 — 내 상품으로 채웁니다<span class="qwrap"><button class="qbtn" type="button">?</button><span class="qtip">현상(문제 인식) → 욕구(해결 의지) → 계획 → 행동 → 보상(문제 해결). 이 다섯 단계 중 하나에 해당하는 콘텐츠라야 소비자 행동 흐름으로 끌고 올 수 있습니다. 어떤 콘텐츠가 이 다섯 중 어디에도 없다면 그 콘텐츠는 돈을 벌게 만드는 콘텐츠가 아닙니다. 키 콘텐츠의 목표는 현상과 욕구 단계에 영향을 주어, 우리 제품을 사도록 계획하게 만들고 행동을 일으키는 것입니다.</span></span></h2>
+  <table class="sheet">
+    <thead><tr><th style="width:16%">단계</th><th style="width:34%">일반 표현</th><th>내 상품에 대입</th></tr></thead>
+    <tbody id="fiveRows"></tbody>
+  </table>
+
+  <h2 class="section"><span class="n">2</span> 일반화 4단 — 확장할지 여기서 판정합니다<span class="qwrap"><button class="qbtn" type="button">?</button><span class="qtip">고유명사 → 일반명사 → 기능·장점·특징 → 그 기능이 해결하는 문제 순으로 내려갑니다. 판정 규칙은 고유명사 조회수 합계가 1억 미만이면 일반명사로 확장해 작성하고, 1억 이상이거나 일반명사와 비슷하면 고유명사 기준으로 작성합니다.</span></span></h2>
+  <table class="sheet">
+    <tbody>
+      <tr><td class="k">고유명사</td><td><input type="text" id="g1" ></td><td style="width:200px"><input type="number" id="g1v" step="10000"> <span style="color:var(--t3);font-size:14px">회</span></td></tr>
+      <tr><td class="k">일반명사</td><td><input type="text" id="g2"></td><td><input type="number" id="g2v" step="10000"> <span style="color:var(--t3);font-size:14px">회</span></td></tr>
+      <tr><td class="k">기능 · 장점 · 특징</td><td colspan="2"><textarea id="g3" rows="5"></textarea></td></tr>
+      <tr><td class="k">어떤 문제를 해결하는가</td><td colspan="2"><textarea id="g4" rows="5"></textarea></td></tr>
+    </tbody>
+  </table>
+  <div class="out" id="genOut"></div>
+
+  <h2 class="section"><span class="n">2</span>-2 문제 ↔ 내 상품의 기능 연결<span class="qwrap"><button class="qbtn" type="button">?</button><span class="qtip">3주차 실행강의에서 직트가 문제 문장 앞에 붙여 둔 괄호 번호가 이것입니다. 그 문제에 답이 되는 옵션의 기능 번호입니다. 연결된 기능이 하나도 없는 문제는 내 상품이 답이 되지 않는 문제이므로, 그 문제로 키 콘텐츠를 만들면 부적합 4번(말은 되지만 내 상품이 답이 아닌 경우)에 걸립니다.</span></span></h2>
+  <div class="card" style="margin-bottom:10px; font-size:14px; color:var(--t3)">
+    옵션의 기능 — 1 재능 없이도 구조로 수익 · 2 방향 예측 부담 없음 · 3 급락 시 보험 역할 · 4 경쟁 없는 지속 수익 · 5 꾸준한 현금흐름 · 6 초보도 접근 가능 · 7 퇴근 후 밤 시간 가능 · 8 익절 시점 고민 불필요
+  </div>
+  <table class="sheet">
+    <thead><tr><th style="width:8%">단계</th><th style="width:58%">시청자가 겪는 문제</th><th style="width:22%">답이 되는 기능 번호</th><th style="width:12%">판정</th></tr></thead>
+    <tbody id="mapRows"></tbody>
+  </table>
+  <div class="out" id="mapOut"></div>
+
+  <h2 class="section"><span class="n">2</span>-3 조사용 프롬프트 — 눌러서 복사합니다<span class="qwrap"><button class="qbtn" type="button">?</button><span class="qtip">3주차 실행강의에서 직트가 만들어 둔 프롬프트입니다. 키워드를 모아 놓고 이 프롬프트와 함께 넣으면 각 키워드의 핵심이 한 문장으로 정리되어 나옵니다. 1단계는 경제적 자유, 2단계는 재테크 카테고리입니다.</span></span></h2>
+  <div class="card" id="prompts"></div>
+
+  <h2 class="section"><span class="n">3</span> 뷰트랩 검색 — 위에서부터 순서대로<span class="qwrap"><button class="qbtn" type="button">?</button><span class="qtip">키 콘텐츠가 될 만한 썸네일과 제목이 안 나오면 다음 줄로 내려갑니다. 현상·욕구·계획·행동·보상 다섯 단계에서 뽑은 키워드를 넣는 것이 핵심입니다. 현상 중심 콘텐츠는 조회수는 높지만 구매 전환은 낮을 수 있습니다. 다섯 단계와 핏이 맞고 범위도 넓은 키워드를 찾으면 조회수와 전환을 함께 기대할 수 있습니다.</span></span></h2>
+  <div class="card" id="viewtrap"></div>
+
+  <h2 class="section"><span class="n">4</span> 키 콘텐츠 후보 판정</h2>
+  <div class="card">
+    <input type="text" id="cand" placeholder="후보 제목을 적습니다" style="width:100%; font-family:inherit; font-size:17px; font-weight:700; background:var(--card2); border:1px solid var(--line); border-radius:9px; padding:12px 14px;">
+    <div class="stage" id="stages"></div>
+    <div id="traps" style="margin-top:14px"></div>
+    <div class="out" id="verdict"></div>
+    <div class="actions"><button class="btn" id="saveCand">이 후보를 목록에 넣기</button><span class="saved" id="savedMsg"></span></div>
+  </div>
+  <div id="candList"></div>
+
+  <h2 class="section"><span class="n">5</span> 판매 논리 3단<span class="qwrap"><button class="qbtn" type="button">?</button><span class="qtip">강의가 제시한 순서입니다. 문제 제기 → 일반적 해결책과 그 한계 → 내 상품의 카테고리로 데려오기 → 내 상품. 패션 코디 사례에서는 체형 진단을 받아도 옷을 못 입는 이유(문제 제기) → 옷 잘 입는 사람이 대신 코디해 주는 것(카테고리) → 내 라이브 방송(내 서비스) 순으로 이어집니다.</span></span></h2>
+  <table class="sheet">
+    <tbody>
+      <tr><td class="k" style="width:24%">1. 문제 제기</td><td><textarea id="s1" rows="3" placeholder="일반적인 해결법으로는 왜 안 되는지"></textarea></td></tr>
+      <tr><td class="k">2. 카테고리로 데려오기</td><td><textarea id="s2" rows="3" placeholder="내 상품이 속한 카테고리가 답이라는 데까지"></textarea></td></tr>
+      <tr><td class="k">3. 내 상품</td><td><textarea id="s3" rows="3" placeholder="그 카테고리 안에서 왜 내 것인지"></textarea></td></tr>
+    </tbody>
+  </table>
+  <div class="actions"><button class="btn" id="copyLogic">세 단락 이어서 복사</button><span class="saved" id="logicMsg"></span></div>
+
+  <div class="nav">
+    <a href="pulling.html">플링 콘텐츠 기획</a>
+    <a href="gyeol.html">결 정의</a>
+    <a href="monetization.html">수익화 기획</a>
+    <a href="control_panel.html">콘텐츠 관리 시트</a>
+  </div>
+</div>
+
+<footer class="foot">직트 유튜브 운영 시스템 — 키 콘텐츠 기획. 비즈니스PT 3주차 본강의와 3주차 실행강의 필기의 절차를 그대로 옮겼습니다. 입력값은 이 컴퓨터의 브라우저에 저장됩니다.</footer>
+
+<script>
+(function(){
+  var KEY='jikt_key_v1', $=function(s){return document.getElementById(s);};
+  var STEPS=[
+    ['현상 (문제 인식)','경제적 불안','직장을 다니지만 돈이 부족하다. 은퇴 후 생활이 걱정된다.'],
+    ['욕구 (해결 의지)','돈을 벌고 싶다','높은 수익은 아니지만 안정적이고 꾸준한 수익을 얻고 싶다.'],
+    ['계획','재테크 · 부업 · 절약','신체적 제약이나 시간에 구애받지 않고 추가 수익을 얻을 수 있는 방법을 찾는다.'],
+    ['행동','행동한다','어떠한 상황과 조건에서도 할 수 있는 재테크를 시작한다.'],
+    ['보상 (문제 해결)','경제적 자유','나를 대신해 돈을 벌어다 주는 시스템이 만들어졌다.']
+  ];
+  var VT=[
+    ['상품명으로 검색','옵션'],
+    ['상품 카테고리로 검색','재테크 · 투자 · 자산관리 · 자산운용 · 돈 관리'],
+    ['상품군이 해결할 수 있는 문제로 검색','노후 불안 · 생활비 부족 · 인플레이션 · 고물가 · 투자 실패 경험 · 경제적 불안정'],
+    ['썸네일 주제가 다섯 단계에 해당하면 그 영상의 제목으로 검색',''],
+    ['참고할 영상의 채널로 들어가 인기순으로 보기','']
+  ];
+  var TRAPS=[
+    ['조회수의 함정에 빠진 경우','기도메타. 조회수가 클 것 같아 고른 소재입니다.'],
+    ['풀링 콘텐츠와 키 콘텐츠를 구분하지 못한 경우','차이는 썸네일이 아니라 원고 안의 내용입니다.'],
+    ['썸네일 주제가 다섯 단계에 영향을 주지 못하는 경우','현상·욕구·계획·행동·보상 어디에도 걸리지 않습니다.'],
+    ['말은 되지만 내 상품이 문제의 답이 아닌 경우','논리적으로 맞아도 답이 내 것이 아니면 팔리지 않습니다.'],
+    ['구매 고객과 시청자가 다른 사람인 경우','조회수는 나와도 살 사람이 아닙니다.']
+  ];
+  var STAGE_NAMES=['현상','욕구','계획','행동','보상'];
+
+  var FUNCS = {
+    1:'재능 없이도 구조로 수익', 2:'방향 예측 부담 없음', 3:'급락 시 보험 역할', 4:'경쟁 없는 지속 수익',
+    5:'꾸준한 현금흐름', 6:'초보도 접근 가능', 7:'퇴근 후 밤 시간 가능', 8:'익절 시점 고민 불필요'
+  };
+  // 3주차 실행강의 — 2단계(재테크) 현상 11개 · 욕구 10개. 괄호 번호가 연결된 기능입니다.
+  var MAP = [
+    ['현상','재테크 수단이 너무 많아서 뭘 골라야 할지 몰라 시작조차 못 하고 있다',''],
+    ['현상','가진 자산이 많지 않은데 괜히 시작했다가 손실 나면 회복이 어려울까 봐 걱정된다','3'],
+    ['현상','리스크가 적은 채권을 선택했지만 수익이 너무 낮아 미래에 도움이 될지 의문이다','5'],
+    ['현상','주식이나 선물을 열심히 해봤지만 번번이 손실만 나고 성과가 없어 지친다','2'],
+    ['현상','전문가 교육을 들어도 실제로 내 계좌에 적용하기엔 너무 복잡하고 어렵다','1,2,4,6'],
+    ['현상','여러 재테크 방법이 있다지만 나한테 맞는 방식이 뭔지 감이 안 온다','1,2,4,6'],
+    ['현상','상승장에서는 수익이 나지만 하락장만 오면 대응도 못 하고 큰 손실을 본다','2,3'],
+    ['현상','직장이나 육아로 바쁜데 하루 종일 차트를 보는 투자 방식은 현실적으로 어렵다','7'],
+    ['현상','유튜브나 책으로 공부는 하는데 실전에서 써먹으려면 막막하고 연결이 안 된다','1'],
+    ['현상','시장이 급격히 떨어질 땐 준비도 대응도 못 해서 손실이 걷잡을 수 없이 커진다','3'],
+    ['현상','진짜 돈 되는 정보는 남과 공유하지 않는다는 불신이 강하다','4,6'],
+    ['욕구','퇴근 후 짧은 시간만 투자해도 결과를 낼 수 있는 방식이 필요하다','7'],
+    ['욕구','매달 고정적인 현금 흐름을 만드는 두 번째 월급이 간절하다','4'],
+    ['욕구','은퇴가 다가오며 크게 벌기보다 지키는 투자를 원한다','4'],
+    ['욕구','주식이나 ETF 투자만으론 수익 한계가 느껴져 새로운 대안이 필요하다','4'],
+    ['욕구','적은 자금으로도 작지만 의미 있는 수익을 얻고 싶다','4'],
+    ['욕구','시장 상황에 덜 흔들리는 안정적인 전략을 알고 싶다','3'],
+    ['욕구','복잡한 방식 말고 내가 스스로 판단할 수 있는 투자 방식을 원한다','1,2,4,6'],
+    ['욕구','공부는 많이 했는데 실전에선 막히지 않는 실용적인 기술을 원한다','1,2,4,6'],
+    ['욕구','심리적으로 흔들리지 않는 루틴화된 전략을 갖고 싶다','6'],
+    ['욕구','경제적 자유까진 바라지 않지만 돈 걱정 없는 일상이 목표다','5']
+  ];
+  var PROMPTS = [
+    ['현상 프롬프트','너는 세계 최고의 언어 해석 분석가야.\n나는 재테크 유튜버로서, 시청자들이 겪는 근본적인 문제와 현상, 현실적인 고민들을 조사하고 있어.\n내가 직접 조사한 키워드들을 정리해뒀으니, 각 키워드의 핵심을 간결한 문장으로 요약해줘.\n복사할때 불필요한 기호는 전부 삭제해줘'],
+    ['욕구 프롬프트','너는 세계 최고의 언어 해석 분석가야.\n나는 재테크 유튜버로서, 시청자들이 겪는 근본적인 문제와 현상, 현실적인 고민을 조사하고,\n그에 따른 욕구가 무엇인지 파악하고 있어.\n내가 직접 정리한 욕구 관련 키워드들이 있으니, 각 키워드의 핵심을 간결하고 명확한 문장으로 요약해줘.\n복사할때 불필요한 기호는 전부 삭제해줘'],
+    ['계획 프롬프트','너는 세계 최고의 언어 해석 분석가야.\n나는 재테크 유튜버로서, 시청자들이 겪는 근본적인 문제와 현상, 현실적인 고민을 조사했고,\n그로부터 어떤 욕구가 생겨나는지도 파악했어.\n이제 그러한 사람들이 앞으로 세워야 할 계획 단계를 구체화하는 중이야.\n내가 직접 정리한 계획단계의 키워드들이 있으니, 각 키워드의 핵심을 간결하고 명확한 문장으로 요약해줘.\n복사할때 불필요한 기호는 전부 삭제해줘'],
+    ['2단계 계획 프롬프트','너는 세계 최고의 언어 해석 분석가야.\n나는 재테크 유튜버로, 시청자들이 겪는 근본적인 문제와 현상, 현실적인 고민들을 조사했고,\n그로부터 어떤 욕구가 생겨나는지도 구체적으로 파악했어.\n지금은 이들이 앞으로 어떤 계획을 세워야 할지 단계를 구체화하는 중이야.\n나는 재테크 수단 중 옵션을 중심으로 교육하고 있으며, 옵션의 기능과 장점 특징을 정리하고 있어.\n이 정보를 바탕으로, 사람들이 겪고 있는 현상과 욕구를 기준 삼아 재테크라는 큰 카테고리 속에서\n옵션이라는 투자 수단을 선택하도록 돕는 구체적인 계획 단계를 구성 중이야.\n복사할때 불필요한 기호는 전부 삭제해줘'],
+    ['공감도 순위 프롬프트','너는 세계 최고의 시장 분석가야.\n나는 재테크 유튜버로서, 시청자들이 겪는 근본적인 문제와 현상, 그리고 현실적인 고민들을 조사했고,\n그로부터 어떤 욕구가 생겨나는지도 구체적으로 파악했어.\n아래 문장들 중, 투자나 재테크를 하는 사람들이 가장 깊이 공감할 수 있는 문장을 공감도 순으로 정렬해줘.\n2단계 현상과 2단계 욕구 모두 포함해서 정리해줘.\n복사할 때 불필요한 기호는 모두 제거해줘.\n50자 이내로 줄바꿈해줘.']
+  ];
+
+  // 1. 구매 5단계
+  $('fiveRows').innerHTML = STEPS.map(function(s,i){
+    return '<tr><td class="k">'+s[0]+'</td><td><input type="text" class="f-a" data-i="'+i+'" value="'+s[1]+'"></td>'+
+           '<td><textarea class="f-b" data-i="'+i+'" rows="2">'+s[2]+'</textarea></td></tr>';
+  }).join('');
+
+  // 3. 뷰트랩 순서
+  $('viewtrap').innerHTML = VT.map(function(v,i){
+    return '<div class="chk" data-vt="'+i+'"><input type="checkbox"><div><div class="t">'+(i+1)+'. '+v[0]+'</div>'+
+      (v[1]?'<div class="d">'+v[1]+'</div>':'<div class="d">앞 단계에서 못 찾았을 때만 내려옵니다.</div>')+'</div></div>';
+  }).join('');
+
+  // 2-2 문제 ↔ 기능 연결
+  document.getElementById('mapRows').innerHTML = MAP.map(function(m,i){
+    return '<tr><td class="k">'+m[0]+'</td><td><input type="text" class="m-t" value="'+m[1].replace(/"/g,'&quot;')+'"></td>'+
+      '<td><input type="text" class="m-f" value="'+m[2]+'" placeholder="예: 1,2,4"></td>'+
+      '<td class="m-v"></td></tr>';
+  }).join('');
+
+  function mapCalc(){
+    var rows=document.querySelectorAll('#mapRows tr'), none=[], cover={};
+    rows.forEach(function(tr){
+      var t=tr.querySelector('.m-t').value.trim();
+      var f=tr.querySelector('.m-f').value.replace(/\s/g,'').split(',').filter(Boolean);
+      var cell=tr.querySelector('.m-v');
+      if(!t){ cell.innerHTML=''; return; }
+      if(!f.length){ cell.innerHTML='<span class="no">답 없음</span>'; none.push(t); }
+      else { cell.innerHTML='<span class="ok">연결됨</span>'; f.forEach(function(n){ cover[n]=(cover[n]||0)+1; }); }
+    });
+    var top=Object.keys(cover).sort(function(a,b){return cover[b]-cover[a];});
+    var html='<b>기능별로 몇 개의 문제를 덮는가</b><div style="margin-top:6px">'+
+      (top.length? top.map(function(n){ return n+'번 '+(FUNCS[n]||'')+' — <b>'+cover[n]+'개</b>'; }).join(' · ') : '연결된 기능이 없습니다.')+'</div>';
+    if(top.length){
+      html += '<div style="margin-top:10px">가장 많은 문제를 덮는 기능은 <b class="big">'+top[0]+'번 '+(FUNCS[top[0]]||'')+'</b>입니다. 키 콘텐츠의 솔루션 자리에 이 기능을 놓으면 가장 많은 사람이 공감합니다.</div>';
+    }
+    if(none.length){
+      html += '<div style="margin-top:10px"><b class="no">답이 없는 문제 '+none.length+'개</b> — 이 문제로 키 콘텐츠를 만들면 부적합 4번에 걸립니다. 풀링 콘텐츠로 돌리거나 연결할 기능을 찾으십시오.<ol style="margin:6px 0 0;padding-left:20px">'+
+        none.map(function(t){ return '<li>'+esc(t)+'</li>'; }).join('')+'</ol></div>';
+    }
+    document.getElementById('mapOut').innerHTML = html;
+  }
+
+  // 2-3 프롬프트
+  document.getElementById('prompts').innerHTML = PROMPTS.map(function(p,i){
+    return '<div class="chk" style="align-items:center"><div style="flex:1"><div class="t">'+p[0]+'</div>'+
+      '<div class="d">'+esc(p[1].split('\n')[1]||'')+'</div></div>'+
+      '<button class="btn" data-prompt="'+i+'">복사</button></div>';
+  }).join('');
+  document.querySelectorAll('[data-prompt]').forEach(function(b){
+    b.onclick=function(){
+      navigator.clipboard && navigator.clipboard.writeText(PROMPTS[+b.dataset.prompt][1]);
+      b.textContent='복사됨'; setTimeout(function(){ b.textContent='복사'; },1200);
+    };
+  });
+
+  // 4. 단계 선택 + 함정
+  $('stages').innerHTML = STAGE_NAMES.map(function(n,i){
+    return '<label><input type="radio" name="stg" value="'+i+'"><span>'+n+' 단계를 겨냥</span></label>';
+  }).join('');
+  $('traps').innerHTML = '<div style="font-size:14px;color:var(--t3);font-weight:700;margin-bottom:6px">해당하는 것에 표시합니다 — 하나라도 걸리면 키 콘텐츠가 아닙니다</div>' +
+    TRAPS.map(function(t,i){
+      return '<div class="chk" data-trap="'+i+'"><input type="checkbox"><div><div class="t">'+t[0]+'</div><div class="d">'+t[1]+'</div></div></div>';
+    }).join('');
+
+  function genCalc(){
+    var v1=+$('g1v').value||0, v2=+$('g2v').value||0, n1=$('g1').value||'고유명사', n2=$('g2').value||'일반명사';
+    var out;
+    if(v1 >= 100000000 || (v2 && v1 >= v2*0.8)){
+      out = '<b class="ok">고유명사 기준으로 작성합니다.</b> '+n1+' 조회수 합계 '+v1.toLocaleString('ko-KR')+'회는 1억 이상이거나 일반명사와 비슷합니다. 굳이 넓히지 않습니다.';
+    } else if(v1>0){
+      out = '<b class="mid">일반명사로 확장해 작성합니다.</b> '+n1+' 조회수 합계 '+v1.toLocaleString('ko-KR')+'회는 1억에 못 미칩니다. '+n2+' 기준으로 키워드를 잡습니다.'+
+            (v2? ' '+n2+'는 '+v2.toLocaleString('ko-KR')+'회입니다.' : '');
+    } else {
+      out = '뷰트랩에서 두 조회수 합계를 넣으면 확장할지 여부가 나옵니다.';
+    }
+    $('genOut').innerHTML = out;
+  }
+
+  function verdict(){
+    var stg = document.querySelector('input[name=stg]:checked');
+    var hit = Array.prototype.filter.call(document.querySelectorAll('[data-trap] input'), function(c){return c.checked;});
+    document.querySelectorAll('[data-trap]').forEach(function(r){ r.classList.toggle('on', r.querySelector('input').checked); });
+    var t = $('cand').value.trim();
+    if(!t){ $('verdict').innerHTML='후보 제목을 적으면 판정이 나옵니다.'; return; }
+    var html='<div class="big">'+esc(t)+'</div>';
+    if(hit.length){
+      html += '<div style="margin-top:8px"><b class="no">키 콘텐츠가 아닙니다.</b> 걸린 항목 '+hit.length+'개 — '+
+        hit.map(function(c){ return c.closest('[data-trap]').querySelector('.t').textContent; }).join(' · ')+'</div>';
+    } else if(!stg){
+      html += '<div style="margin-top:8px"><b class="mid">겨냥하는 단계를 고르십시오.</b> 다섯 단계 어디에도 걸리지 않으면 돈을 벌게 만드는 콘텐츠가 아닙니다.</div>';
+    } else if(stg.value==='0' || stg.value==='1'){
+      html += '<div style="margin-top:8px"><b class="ok">키 콘텐츠로 적합합니다.</b> '+STAGE_NAMES[stg.value]+' 단계를 겨냥하고 있고 함정 다섯 가지에 걸리지 않았습니다.</div>';
+    } else {
+      html += '<div style="margin-top:8px"><b class="mid">'+STAGE_NAMES[stg.value]+' 단계를 겨냥하고 있습니다.</b> 키 콘텐츠의 목표는 현상과 욕구에 영향을 주는 것입니다. 이 후보는 풀링 콘텐츠로 쓰거나, 현상·욕구 쪽으로 각도를 옮기십시오.'+
+        (stg.value==='4'? ' 다만 보상은 비포·애프터 구조로 키 콘텐츠가 될 수 있습니다.':'')+'</div>';
+    }
+    $('verdict').innerHTML = html;
+  }
+  function esc(s){ return String(s).replace(/[<>&"]/g,function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c];}); }
+
+  function collect(){
+    var d={five:[],vt:[],traps:[],cand:$('cand').value,list:window.__list||[],
+      g1:$('g1').value,g1v:$('g1v').value,g2:$('g2').value,g2v:$('g2v').value,g3:$('g3').value,g4:$('g4').value,
+      s1:$('s1').value,s2:$('s2').value,s3:$('s3').value};
+    document.querySelectorAll('.f-a').forEach(function(el){ d.five.push([el.value, el.closest('tr').querySelector('.f-b').value]); });
+    document.querySelectorAll('[data-vt] input').forEach(function(c){ d.vt.push(c.checked); });
+    document.querySelectorAll('[data-trap] input').forEach(function(c){ d.traps.push(c.checked); });
+    var st=document.querySelector('input[name=stg]:checked'); d.stg = st? st.value : null;
+    return d;
+  }
+  function save(){
+    var d=collect(); var t=new Date();
+    d.savedAt=(t.getMonth()+1)+'/'+t.getDate()+' '+String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0');
+    try{ localStorage.setItem(KEY, JSON.stringify(d)); $('savedMsg').textContent='저장됨 · '+d.savedAt; }catch(e){}
+  }
+  function load(){
+    var d=null; try{ d=JSON.parse(localStorage.getItem(KEY)||'null'); }catch(e){}
+    // 기본값 — 직트 3주차 필기
+    $('g1').value='옵션거래'; $('g1v').value=28930000; $('g2').value='재테크'; $('g2v').value=120000000;
+    $('g3').value='주식 투자와 달리 옵션은 상품의 구조적 특성만으로 시장 방향과 상관없이 수익을 낼 수 있습니다.\n1. 리스크 관리 — 보험처럼 작은 비용으로 큰 손실을 헤지합니다.\n2. 문제 해결 중심 — 매매 기법이 아니라 자금·위험 관리까지 다룹니다.\n3. 기법 의존도 낮음 — 복잡한 기술적 전략 없이도 수익이 납니다.\n4. 시장 방향 무관 — 상승장·하락장에 의존하지 않습니다.\n5. 알파 경쟁 없음 — 시장의 파이를 나누지 않습니다.';
+    $('g4').value='1. 큰 손실이 걱정될 때 — 작게 지불하고 크게 방어합니다.\n2. 무엇을 어떻게 시작할지 막막할 때 — 자금과 위험 관리까지 배웁니다.\n3. 복잡한 매매가 부담스러울 때 — 단순한 구조로도 수익이 납니다.\n4. 시장 흐름을 예측하기 어려울 때 — 방향과 무관하게 기대할 수 있습니다.\n5. 경쟁이 스트레스일 때 — 알파 경쟁 없이 안정적인 수익을 추구합니다.';
+    window.__list = [
+      {t:'외국인만 꿀빠는 옵션 어떻게 하는건데?', k:'키'},
+      {t:'주식투자 시장이 폭락해도 보험금 수령하는법?', k:'키'},
+      {t:'재테크 하면 돈 못버는 이유', k:'풀링'},
+      {t:'부자가 되려는 사람들의 5가지 특징', k:'풀링'}
+    ];
+    if(d){
+      if(d.five) d.five.forEach(function(v,i){
+        var a=document.querySelectorAll('.f-a')[i], b=document.querySelectorAll('.f-b')[i];
+        if(a){a.value=v[0];} if(b){b.value=v[1];}
+      });
+      if(d.vt) d.vt.forEach(function(v,i){ var c=document.querySelectorAll('[data-vt] input')[i]; if(c) c.checked=v; });
+      if(d.traps) d.traps.forEach(function(v,i){ var c=document.querySelectorAll('[data-trap] input')[i]; if(c) c.checked=v; });
+      ['g1','g1v','g2','g2v','g3','g4','s1','s2','s3','cand'].forEach(function(k){ if(d[k]!==undefined && d[k]!=='') $(k).value=d[k]; });
+      if(d.stg!==null && d.stg!==undefined){ var r=document.querySelector('input[name=stg][value="'+d.stg+'"]'); if(r) r.checked=true; }
+      if(d.list) window.__list=d.list;
+      if(d.savedAt) $('savedMsg').textContent='저장됨 · '+d.savedAt;
+    }
+    renderList();
+  }
+  function renderList(){
+    var l=window.__list||[];
+    if(!l.length){ $('candList').innerHTML=''; return; }
+    $('candList').innerHTML = '<div class="out"><b>채널 구조 — 지금까지 통과한 후보</b>'+
+      '<table class="sheet" style="margin-top:10px"><thead><tr><th style="width:14%">구분</th><th>제목</th><th style="width:8%"></th></tr></thead><tbody>'+
+      l.map(function(r,i){ return '<tr><td class="k">'+r.k+' 콘텐츠</td><td>'+esc(r.t)+'</td>'+
+        '<td><button class="btn" data-del="'+i+'" style="padding:5px 10px">삭제</button></td></tr>'; }).join('')+
+      '</tbody></table></div>';
+    $('candList').querySelectorAll('[data-del]').forEach(function(b){
+      b.onclick=function(){ window.__list.splice(+b.dataset.del,1); renderList(); save(); };
+    });
+  }
+
+  document.addEventListener('input', function(e){
+    if(e.target.closest('#genOut')) return;
+    genCalc(); verdict(); mapCalc(); save();
+  });
+  document.addEventListener('change', function(e){
+    if(e.target.type==='checkbox' || e.target.type==='radio'){ verdict(); save(); }
+  });
+  $('saveCand').onclick=function(){
+    var t=$('cand').value.trim(); if(!t) return;
+    var stg=document.querySelector('input[name=stg]:checked');
+    var bad=document.querySelectorAll('[data-trap] input:checked').length>0;
+    var kind = (!bad && stg && (stg.value==='0'||stg.value==='1')) ? '키' : '풀링';
+    window.__list=(window.__list||[]).concat([{t:t,k:kind}]);
+    $('cand').value=''; renderList(); verdict(); save();
+  };
+  $('copyLogic').onclick=function(){
+    var txt=[$('s1').value,$('s2').value,$('s3').value].filter(Boolean).join('\n\n');
+    navigator.clipboard && navigator.clipboard.writeText(txt);
+    $('logicMsg').textContent='복사했습니다.';
+  };
+  document.querySelectorAll('.qbtn').forEach(function(b){
+    b.onclick=function(ev){ ev.stopPropagation(); this.parentNode.classList.toggle('open'); };
+  });
+
+  load(); genCalc(); verdict(); mapCalc();
+})();
+</script>
