@@ -28,9 +28,9 @@
   h1{font-size:26px; margin:0; font-weight:800; letter-spacing:-.012em;}
   .head .src-note{font-size:14px; color:var(--t3);}
 
-  h2.section{font-size:17px; font-weight:800; margin:34px 0 10px; display:flex; align-items:center; gap:8px;}
+  h2.section{font-size:17px; font-weight:800; margin:34px 0 10px; display:block;}
   h2.section .n{width:22px; height:22px; border-radius:50%; background:var(--accent-grad); color:#fff; font-size:14px;
-    display:flex; align-items:center; justify-content:center; font-weight:800; flex:0 0 auto; box-shadow:var(--badge-shadow);}
+    display:inline-flex; vertical-align:2px; margin-right:8px; align-items:center; justify-content:center; font-weight:800; flex:0 0 auto; box-shadow:var(--badge-shadow);}
 
   .card{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px 22px;
     box-shadow:var(--shadow-card);}
@@ -54,7 +54,7 @@
   .chain{display:flex; align-items:stretch; margin-top:14px; flex-wrap:wrap;}
   .link{flex:1 1 150px; background:var(--card); border:1px solid var(--line); border-right:none; padding:16px 12px; text-align:center;}
   .link:first-child{border-radius:12px 0 0 12px;}
-  .link:last-child{border-radius:0 12px 12px 0; border-right:1px solid var(--line); background:var(--card2);}
+  .link:last-child{border-radius:12px; border-right:1px solid var(--line); background:var(--card2);}
   .link .v{font-size:24px; font-weight:800; letter-spacing:-.02em;}
   .link .k{font-size:14px; color:var(--t3); font-weight:700; margin-top:3px;}
   .link .r{font-size:14px; color:var(--t3); margin-top:6px;}
@@ -62,7 +62,7 @@
 
   /* 판정 줄 */
   .verdict{margin-top:14px; padding:16px 18px; border-radius:12px; background:var(--card2); border:1px solid var(--line);
-    border-left:3px solid var(--accent); font-size:15px; color:var(--t2);}
+     font-size:15px; color:var(--t2);}
   .verdict b{color:var(--t1);}
   .verdict .big{font-size:19px; font-weight:800;}
   .over{color:var(--crisis);} .under{color:var(--t3);} .mid{color:var(--caution);}
@@ -104,7 +104,7 @@
   .qwrap.open .qbtn{background:var(--accent); border-color:var(--accent); color:#fff;}
   .qtip{display:none;}
   .qwrap.open .qtip{display:block; margin:8px 0 2px; background:var(--card2); border:1px solid var(--line);
-    border-left:3px solid var(--accent); border-radius:0 10px 10px 0; padding:10px 12px; font-size:14px; color:var(--t2); line-height:1.7;}
+    border-radius:10px; padding:10px 12px; font-size:14px; color:var(--t2); line-height:1.7;}
 
   .nav{display:flex; gap:10px; flex-wrap:wrap; margin-top:16px;}
   .nav a{font-size:14px; font-weight:700; color:var(--accent); text-decoration:none; background:var(--card);
@@ -118,7 +118,7 @@
 
   <div class="head">
     <h1>수익화 기획</h1>
-    <div class="src-note">비즈니스PT 2주차 · 안내판 1층 · 값은 이 컴퓨터에 저장됩니다</div>
+    <div class="src-note">비즈니스PT 2주차 _ 안내판 1층 _ 값은 이 컴퓨터에 저장됩니다</div>
   </div>
 
   <h2 class="section"><span class="n">1</span> 목표를 넣으면 필요 조회수가 나옵니다</h2>
@@ -184,8 +184,8 @@
   <table class="sheet">
     <thead><tr><th style="width:34%">상품</th><th style="width:18%">가격</th><th style="width:16%">결제 방식</th><th>최근 4개월 실적</th></tr></thead>
     <tbody>
-      <tr><td class="k">풀 패키지 (강의 + 트레이딩 키)</td><td class="num">780,000원</td><td>1회</td><td class="why">2건 · 평균 750,000원</td></tr>
-      <tr><td class="k">트레이딩 키 (1개월 정보 제공)</td><td class="num">200,000원</td><td>정기</td><td class="why">22건 · 평균 135,000원 · 재구매가 여기서 나옵니다</td></tr>
+      <tr><td class="k">풀 패키지 (강의 + 트레이딩 키)</td><td class="num">780,000원</td><td>1회</td><td class="why">2건 _ 평균 750,000원</td></tr>
+      <tr><td class="k">트레이딩 키 (1개월 정보 제공)</td><td class="num">200,000원</td><td>정기</td><td class="why">22건 _ 평균 135,000원 _ 재구매가 여기서 나옵니다</td></tr>
       <tr><td class="k">해외 옵션 전문과정 (심화)</td><td class="num">260,000원</td><td>1회</td><td class="why">실적 없음</td></tr>
       <tr><td class="k">해외 옵션 입문 과정 (기초)</td><td class="num">130,000원</td><td>1회</td><td class="why">1건</td></tr>
     </tbody>
@@ -240,7 +240,7 @@
         r.querySelector('input').checked = !!on;
         r.classList.toggle('done', !!on);
       });
-      if(d.savedAt) $('savedMsg').textContent = '저장됨 · ' + d.savedAt;
+      if(d.savedAt) $('savedMsg').textContent = '저장됨 _ ' + d.savedAt;
     }catch(e){}
   }
   function save(){
@@ -251,7 +251,7 @@
     });
     var t = new Date();
     d.savedAt = (t.getMonth()+1)+'/'+t.getDate()+' '+String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0');
-    try{ localStorage.setItem(KEY, JSON.stringify(d)); $('savedMsg').textContent = '저장됨 · ' + d.savedAt; }catch(e){}
+    try{ localStorage.setItem(KEY, JSON.stringify(d)); $('savedMsg').textContent = '저장됨 _ ' + d.savedAt; }catch(e){}
   }
 
   function calc(){
@@ -297,7 +297,7 @@
       '<div style="margin-top:14px"><b>결제 건수</b> ' + cc + '건 / ' + won(needBuyers) + '건 — <b>' + pc.toFixed(0) + '%</b>' +
       '<div class="bar"><i style="width:'+pc+'%"></i></div></div>' +
       '<div style="margin-top:14px; font-size:14px; color:var(--t3)">부족분 — 매출 ' + won(Math.max(0,targetRev-cr)) +
-      '원 · 조회수 ' + won(Math.max(0,needPull-cv)) + '회 · 결제 ' + Math.max(0, Math.ceil(needBuyers-cc)) + '건</div>';
+      '원 _ 조회수 ' + won(Math.max(0,needPull-cv)) + '회 _ 결제 ' + Math.max(0, Math.ceil(needBuyers-cc)) + '건</div>';
   }
 
   ids.forEach(function(k){ $(k).addEventListener('input', calc); });

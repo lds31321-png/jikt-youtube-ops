@@ -23,9 +23,9 @@
   h1{font-size:26px; margin:0; font-weight:800; letter-spacing:-.012em;}
   .head .src-note{font-size:14px; color:var(--t3);}
 
-  h2.section{font-size:17px; font-weight:800; margin:34px 0 10px; display:flex; align-items:center; gap:8px;}
+  h2.section{font-size:17px; font-weight:800; margin:34px 0 10px; display:block;}
   h2.section .n{width:22px; height:22px; border-radius:50%; background:var(--accent-grad); color:#fff; font-size:14px;
-    display:flex; align-items:center; justify-content:center; font-weight:800; flex:0 0 auto; box-shadow:var(--badge-shadow);}
+    display:inline-flex; vertical-align:2px; margin-right:8px; align-items:center; justify-content:center; font-weight:800; flex:0 0 auto; box-shadow:var(--badge-shadow);}
 
   .card{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px 20px; box-shadow:var(--shadow-card);}
   table.sheet{width:100%; border-collapse:collapse; background:var(--card); border:1px solid var(--line);
@@ -47,8 +47,8 @@
   .actions{display:flex; gap:10px; margin-top:12px; flex-wrap:wrap; align-items:center;}
   .saved{font-size:14px; color:var(--t3);}
 
-  .out{background:var(--card2); border:1px solid var(--line); border-left:3px solid var(--accent);
-    border-radius:0 12px 12px 0; padding:15px 17px; margin-top:12px; font-size:15px; color:var(--t2);}
+  .out{background:var(--card2); border:1px solid var(--line); 
+    border-radius:12px; padding:15px 17px; margin-top:12px; font-size:15px; color:var(--t2);}
   .out b{color:var(--t1);} .out .big{font-size:18px; font-weight:800; color:var(--t1);}
   .ok{color:var(--accent); font-weight:800;} .no{color:var(--crisis); font-weight:800;} .mid{color:var(--caution); font-weight:800;}
 
@@ -73,7 +73,7 @@
   .qwrap.open .qbtn{background:var(--accent); border-color:var(--accent); color:#fff;}
   .qtip{display:none;}
   .qwrap.open .qtip{display:block; margin:8px 0 2px; background:var(--card2); border:1px solid var(--line);
-    border-left:3px solid var(--accent); border-radius:0 10px 10px 0; padding:10px 12px; font-size:14px; color:var(--t2); line-height:1.7; font-weight:500;}
+    border-radius:10px; padding:10px 12px; font-size:14px; color:var(--t2); line-height:1.7; font-weight:500;}
 
   .nav{display:flex; gap:10px; flex-wrap:wrap; margin-top:16px;}
   .nav a{font-size:14px; font-weight:700; color:var(--accent); text-decoration:none; background:var(--card);
@@ -86,7 +86,7 @@
   <a class="back" href="index.html">← 메인으로</a>
   <div class="head">
     <h1>키 콘텐츠 기획</h1>
-    <div class="src-note">비즈니스PT 3주차 본강의 + 3주차 실행강의 · 안내판 3층 · 값은 이 컴퓨터에 저장됩니다</div>
+    <div class="src-note">비즈니스PT 3주차 본강의 + 3주차 실행강의 _ 안내판 3층 _ 값은 이 컴퓨터에 저장됩니다</div>
   </div>
 
   <h2 class="section"><span class="n">1</span> 구매 5단계 — 내 상품으로 채웁니다<span class="qwrap"><button class="qbtn" type="button">?</button><span class="qtip">현상(문제 인식) → 욕구(해결 의지) → 계획 → 행동 → 보상(문제 해결). 이 다섯 단계 중 하나에 해당하는 콘텐츠라야 소비자 행동 흐름으로 끌고 올 수 있습니다. 어떤 콘텐츠가 이 다섯 중 어디에도 없다면 그 콘텐츠는 돈을 벌게 만드는 콘텐츠가 아닙니다. 키 콘텐츠의 목표는 현상과 욕구 단계에 영향을 주어, 우리 제품을 사도록 계획하게 만들고 행동을 일으키는 것입니다.</span></span></h2>
@@ -100,7 +100,7 @@
     <tbody>
       <tr><td class="k">고유명사</td><td><input type="text" id="g1" ></td><td style="width:200px"><input type="number" id="g1v" step="10000"> <span style="color:var(--t3);font-size:14px">회</span></td></tr>
       <tr><td class="k">일반명사</td><td><input type="text" id="g2"></td><td><input type="number" id="g2v" step="10000"> <span style="color:var(--t3);font-size:14px">회</span></td></tr>
-      <tr><td class="k">기능 · 장점 · 특징</td><td colspan="2"><textarea id="g3" rows="5"></textarea></td></tr>
+      <tr><td class="k">기능 _ 장점 _ 특징</td><td colspan="2"><textarea id="g3" rows="5"></textarea></td></tr>
       <tr><td class="k">어떤 문제를 해결하는가</td><td colspan="2"><textarea id="g4" rows="5"></textarea></td></tr>
     </tbody>
   </table>
@@ -108,7 +108,7 @@
 
   <h2 class="section"><span class="n">2</span>-2 문제 ↔ 내 상품의 기능 연결<span class="qwrap"><button class="qbtn" type="button">?</button><span class="qtip">3주차 실행강의에서 직트가 문제 문장 앞에 붙여 둔 괄호 번호가 이것입니다. 그 문제에 답이 되는 옵션의 기능 번호입니다. 연결된 기능이 하나도 없는 문제는 내 상품이 답이 되지 않는 문제이므로, 그 문제로 키 콘텐츠를 만들면 부적합 4번(말은 되지만 내 상품이 답이 아닌 경우)에 걸립니다.</span></span></h2>
   <div class="card" style="margin-bottom:10px; font-size:14px; color:var(--t3)">
-    옵션의 기능 — 1 재능 없이도 구조로 수익 · 2 방향 예측 부담 없음 · 3 급락 시 보험 역할 · 4 경쟁 없는 지속 수익 · 5 꾸준한 현금흐름 · 6 초보도 접근 가능 · 7 퇴근 후 밤 시간 가능 · 8 익절 시점 고민 불필요
+    옵션의 기능 — 1 재능 없이도 구조로 수익 _ 2 방향 예측 부담 없음 _ 3 급락 시 보험 역할 _ 4 경쟁 없는 지속 수익 _ 5 꾸준한 현금흐름 _ 6 초보도 접근 가능 _ 7 퇴근 후 밤 시간 가능 _ 8 익절 시점 고민 불필요
   </div>
   <table class="sheet">
     <thead><tr><th style="width:8%">단계</th><th style="width:58%">시청자가 겪는 문제</th><th style="width:22%">답이 되는 기능 번호</th><th style="width:12%">판정</th></tr></thead>
@@ -158,14 +158,14 @@
   var STEPS=[
     ['현상 (문제 인식)','경제적 불안','직장을 다니지만 돈이 부족하다. 은퇴 후 생활이 걱정된다.'],
     ['욕구 (해결 의지)','돈을 벌고 싶다','높은 수익은 아니지만 안정적이고 꾸준한 수익을 얻고 싶다.'],
-    ['계획','재테크 · 부업 · 절약','신체적 제약이나 시간에 구애받지 않고 추가 수익을 얻을 수 있는 방법을 찾는다.'],
+    ['계획','재테크 _ 부업 _ 절약','신체적 제약이나 시간에 구애받지 않고 추가 수익을 얻을 수 있는 방법을 찾는다.'],
     ['행동','행동한다','어떠한 상황과 조건에서도 할 수 있는 재테크를 시작한다.'],
     ['보상 (문제 해결)','경제적 자유','나를 대신해 돈을 벌어다 주는 시스템이 만들어졌다.']
   ];
   var VT=[
     ['상품명으로 검색','옵션'],
-    ['상품 카테고리로 검색','재테크 · 투자 · 자산관리 · 자산운용 · 돈 관리'],
-    ['상품군이 해결할 수 있는 문제로 검색','노후 불안 · 생활비 부족 · 인플레이션 · 고물가 · 투자 실패 경험 · 경제적 불안정'],
+    ['상품 카테고리로 검색','재테크 _ 투자 _ 자산관리 _ 자산운용 _ 돈 관리'],
+    ['상품군이 해결할 수 있는 문제로 검색','노후 불안 _ 생활비 부족 _ 인플레이션 _ 고물가 _ 투자 실패 경험 _ 경제적 불안정'],
     ['썸네일 주제가 다섯 단계에 해당하면 그 영상의 제목으로 검색',''],
     ['참고할 영상의 채널로 들어가 인기순으로 보기','']
   ];
@@ -182,7 +182,7 @@
     1:'재능 없이도 구조로 수익', 2:'방향 예측 부담 없음', 3:'급락 시 보험 역할', 4:'경쟁 없는 지속 수익',
     5:'꾸준한 현금흐름', 6:'초보도 접근 가능', 7:'퇴근 후 밤 시간 가능', 8:'익절 시점 고민 불필요'
   };
-  // 3주차 실행강의 — 2단계(재테크) 현상 11개 · 욕구 10개. 괄호 번호가 연결된 기능입니다.
+  // 3주차 실행강의 — 2단계(재테크) 현상 11개 _ 욕구 10개. 괄호 번호가 연결된 기능입니다.
   var MAP = [
     ['현상','재테크 수단이 너무 많아서 뭘 골라야 할지 몰라 시작조차 못 하고 있다',''],
     ['현상','가진 자산이 많지 않은데 괜히 시작했다가 손실 나면 회복이 어려울까 봐 걱정된다','3'],
@@ -245,7 +245,7 @@
     });
     var top=Object.keys(cover).sort(function(a,b){return cover[b]-cover[a];});
     var html='<b>기능별로 몇 개의 문제를 덮는가</b><div style="margin-top:6px">'+
-      (top.length? top.map(function(n){ return n+'번 '+(FUNCS[n]||'')+' — <b>'+cover[n]+'개</b>'; }).join(' · ') : '연결된 기능이 없습니다.')+'</div>';
+      (top.length? top.map(function(n){ return n+'번 '+(FUNCS[n]||'')+' — <b>'+cover[n]+'개</b>'; }).join(' _ ') : '연결된 기능이 없습니다.')+'</div>';
     if(top.length){
       html += '<div style="margin-top:10px">가장 많은 문제를 덮는 기능은 <b class="big">'+top[0]+'번 '+(FUNCS[top[0]]||'')+'</b>입니다. 키 콘텐츠의 솔루션 자리에 이 기능을 놓으면 가장 많은 사람이 공감합니다.</div>';
     }
@@ -301,7 +301,7 @@
     var html='<div class="big">'+esc(t)+'</div>';
     if(hit.length){
       html += '<div style="margin-top:8px"><b class="no">키 콘텐츠가 아닙니다.</b> 걸린 항목 '+hit.length+'개 — '+
-        hit.map(function(c){ return c.closest('[data-trap]').querySelector('.t').textContent; }).join(' · ')+'</div>';
+        hit.map(function(c){ return c.closest('[data-trap]').querySelector('.t').textContent; }).join(' _ ')+'</div>';
     } else if(!stg){
       html += '<div style="margin-top:8px"><b class="mid">겨냥하는 단계를 고르십시오.</b> 다섯 단계 어디에도 걸리지 않으면 돈을 벌게 만드는 콘텐츠가 아닙니다.</div>';
     } else if(stg.value==='0' || stg.value==='1'){
@@ -327,7 +327,7 @@
   function save(){
     var d=collect(); var t=new Date();
     d.savedAt=(t.getMonth()+1)+'/'+t.getDate()+' '+String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0');
-    try{ localStorage.setItem(KEY, JSON.stringify(d)); $('savedMsg').textContent='저장됨 · '+d.savedAt; }catch(e){}
+    try{ localStorage.setItem(KEY, JSON.stringify(d)); $('savedMsg').textContent='저장됨 _ '+d.savedAt; }catch(e){}
   }
   function load(){
     var d=null; try{ d=JSON.parse(localStorage.getItem(KEY)||'null'); }catch(e){}
@@ -351,7 +351,7 @@
       ['g1','g1v','g2','g2v','g3','g4','s1','s2','s3','cand'].forEach(function(k){ if(d[k]!==undefined && d[k]!=='') $(k).value=d[k]; });
       if(d.stg!==null && d.stg!==undefined){ var r=document.querySelector('input[name=stg][value="'+d.stg+'"]'); if(r) r.checked=true; }
       if(d.list) window.__list=d.list;
-      if(d.savedAt) $('savedMsg').textContent='저장됨 · '+d.savedAt;
+      if(d.savedAt) $('savedMsg').textContent='저장됨 _ '+d.savedAt;
     }
     renderList();
   }

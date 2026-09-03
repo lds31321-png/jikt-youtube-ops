@@ -23,9 +23,9 @@
   h1{font-size:26px; margin:0; font-weight:800; letter-spacing:-.012em;}
   .head .src-note{font-size:14px; color:var(--t3);}
 
-  h2.section{font-size:17px; font-weight:800; margin:34px 0 10px; display:flex; align-items:center; gap:8px;}
+  h2.section{font-size:17px; font-weight:800; margin:34px 0 10px; display:block;}
   h2.section .n{width:22px; height:22px; border-radius:50%; background:var(--accent-grad); color:#fff; font-size:14px;
-    display:flex; align-items:center; justify-content:center; font-weight:800; flex:0 0 auto; box-shadow:var(--badge-shadow);}
+    display:inline-flex; vertical-align:2px; margin-right:8px; align-items:center; justify-content:center; font-weight:800; flex:0 0 auto; box-shadow:var(--badge-shadow);}
 
   .card{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px 20px; box-shadow:var(--shadow-card);}
   table.sheet{width:100%; border-collapse:collapse; background:var(--card); border:1px solid var(--line);
@@ -49,8 +49,8 @@
   .actions{display:flex; gap:10px; margin-top:12px; flex-wrap:wrap; align-items:center;}
   .saved{font-size:14px; color:var(--t3);}
 
-  .out{background:var(--card2); border:1px solid var(--line); border-left:3px solid var(--accent);
-    border-radius:0 12px 12px 0; padding:15px 17px; margin-top:12px; font-size:15px; color:var(--t2);}
+  .out{background:var(--card2); border:1px solid var(--line); 
+    border-radius:12px; padding:15px 17px; margin-top:12px; font-size:15px; color:var(--t2);}
   .out b{color:var(--t1);} .out .big{font-size:19px; font-weight:800; color:var(--t1);}
   .ok{color:var(--accent); font-weight:800;} .no{color:var(--crisis); font-weight:800;} .mid{color:var(--caution); font-weight:800;}
 
@@ -74,7 +74,7 @@
   .qwrap.open .qbtn{background:var(--accent); border-color:var(--accent); color:#fff;}
   .qtip{display:none;}
   .qwrap.open .qtip{display:block; margin:8px 0 2px; background:var(--card2); border:1px solid var(--line);
-    border-left:3px solid var(--accent); border-radius:0 10px 10px 0; padding:10px 12px; font-size:14px; color:var(--t2); line-height:1.7; font-weight:500;}
+    border-radius:10px; padding:10px 12px; font-size:14px; color:var(--t2); line-height:1.7; font-weight:500;}
 
   .nav{display:flex; gap:10px; flex-wrap:wrap; margin-top:16px;}
   .nav a{font-size:14px; font-weight:700; color:var(--accent); text-decoration:none; background:var(--card);
@@ -100,7 +100,7 @@
   <a class="back" href="index.html">← 메인으로</a>
   <div class="head">
     <h1>풀링 콘텐츠 기획</h1>
-    <div class="src-note">비즈니스PT 4주차 본강의 + 실행강의 · 안내판 3층 · 값은 이 컴퓨터에 저장됩니다</div>
+    <div class="src-note">비즈니스PT 4주차 본강의 + 실행강의 _ 안내판 3층 _ 값은 이 컴퓨터에 저장됩니다</div>
   </div>
 
   <h2 class="section"><span class="n">1</span> 계단 내려가기 — 상품에서 소재를 확장합니다 <span class="qwrap"><button class="qbtn" type="button">?</button><span class="qtip">행동 단계는 판매하는 상품 그 자체입니다. 여기서 계획, 욕구, 현상으로 한 칸씩 내려가며 검색어를 만듭니다. 강의 예시 — RTG부스터 오메가3(행동) → 오메가3(계획, 일반화) → 심혈관 건강(욕구, 기능·효능 검색) → 목·어깨 통증, 눈이 침침하다(현상, 문제가 드러나는 상황). tx600 소형 녹음기 → 녹음기 → 음성저장 → 중요한 내용을 반복해 듣고 싶다 → 성적을 올리고 싶다. 시스템 에어컨 설치 → 시스템 에어컨 → 공기청정 → 공간 차지가 크다 → 공간을 확보하고 싶다. 현상 단계는 구체화하거나 사례 중심으로 찾는 것이 중요합니다.</span></span></h2>
@@ -245,7 +245,7 @@ function save(){
   CHK.forEach(function(i){ if($(i)) d.c[i]=$(i).checked; });
   var r=document.querySelector('input[name=kind]:checked'); d.k=r?r.value:'';
   try{ localStorage.setItem(KEY, JSON.stringify(d)); }catch(e){}
-  $('c_saved').textContent='저장됨 · '+new Date().toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
+  $('c_saved').textContent='저장됨 _ '+new Date().toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
 }
 function load(){
   var raw=null; try{ raw=localStorage.getItem(KEY); }catch(e){}
@@ -273,7 +273,7 @@ function render(){
   var kw=[];
   st.forEach(function(p){ p[1].split(/[,·]/).forEach(function(w){ w=w.trim(); if(w) kw.push(p[0]+' '+w); }); });
   $('o_stair').innerHTML = kw.length
-    ? '<b>뷰트랩에 넣을 검색어 '+kw.length+'개</b><div style="margin-top:7px;line-height:1.9">'+kw.join(' · ')+'</div><div style="margin-top:8px;font-size:14px;color:var(--t3)">위에서부터 순서대로 넣습니다. 계획 단계에서 안 나오면 욕구로, 그래도 안 나오면 현상으로 내려갑니다.</div>'
+    ? '<b>뷰트랩에 넣을 검색어 '+kw.length+'개</b><div style="margin-top:7px;line-height:1.9">'+kw.join(' _ ')+'</div><div style="margin-top:8px;font-size:14px;color:var(--t3)">위에서부터 순서대로 넣습니다. 계획 단계에서 안 나오면 욕구로, 그래도 안 나오면 현상으로 내려갑니다.</div>'
     : '계획·욕구·현상 칸을 채우면 검색어 목록이 나옵니다.';
 
   // 2 시장성
@@ -283,7 +283,7 @@ function render(){
     if(pv>=100000000) msg='<span class="ok">고유명사 그대로 갑니다.</span> '+pn+' '+man(pv)+'회는 1억을 넘으므로 일반화하지 않아도 시장이 있습니다.';
     else if(best>=100000000) msg='<span class="mid">일반명사로 확장합니다.</span> '+pn+' '+man(pv)+'회는 시장성이 낮습니다. '+(gv>=fv?gn+' '+man(gv):fn+' '+man(fv))+'회 기준으로 소재를 잡습니다.';
     else msg='<span class="no">셋 다 1억 미만입니다.</span> 상위 카테고리로 한 칸 더 올리거나, 시험 준비 단계처럼 그 앞 단계로 넓힙니다.';
-    $('o_mkt').innerHTML=msg+'<div style="margin-top:8px;font-size:14px;color:var(--t3)">강의 실측 — 몽블랑 만년필 803.5만 · 만년필 1733만 · 기능·장점·특징 7782만. 확장을 어디까지 하든 기준은 하나입니다. 넓힌 주제에서 지금의 문제 인식까지 다리가 놓이는가.</div>';
+    $('o_mkt').innerHTML=msg+'<div style="margin-top:8px;font-size:14px;color:var(--t3)">강의 실측 — 몽블랑 만년필 803.5만 _ 만년필 1733만 _ 기능·장점·특징 7782만. 확장을 어디까지 하든 기준은 하나입니다. 넓힌 주제에서 지금의 문제 인식까지 다리가 놓이는가.</div>';
   } else $('o_mkt').textContent='조회수 합계를 넣으면 확장 여부가 나옵니다.';
 
   // 3 종류
@@ -298,13 +298,13 @@ function render(){
   else { stage='<span class="ok">1단계부터 7단계까지 전부 씁니다.</span> 유튜브로 내는 월 매출이 500만 원을 넘었습니다.'; pre=[1,2,3,4,5,6,7]; }
   $('o_stage').innerHTML=stage;
   var P={
-    1:['1단계 · 영상 찾기','필터 — 기여도와 성과도 Good·Great만 · 쇼츠 제거 · 조회수 5만 이상','정렬 — 구독자가 적은 순','상세 팝업의 영상 조회수 성장 추정 그래프가 지금도 올라가는지 확인합니다','조회수 5만으로 걸어 영상이 세 개 이하로 남으면 1만으로 낮춥니다'],
-    2:['2단계 · 핫 비디오','홈화면 노출 확률이 큰 영상을 일자별로 봅니다','제목과 썸네일에서 끌리는 것을 영상 수집으로 저장합니다','이미 하고 싶은 주제가 있다면 핫 비디오의 제목을 디벨롭합니다'],
-    3:['3단계 · 노출 확률','노출 확률 버튼 클릭 후 필터에서 Normal·Good·Great만','정렬 — 노출 확률이 높은 순','최근 24시간 기준 조회수 변화가 있는 영상입니다. 노출 확률은 계속 달라집니다'],
-    4:['4단계 · 클래식','정렬 — 게시일이 오래된 순','게시한 지 오래됐는데도 노출 확률이 좋은 영상을 영상 수집으로 저장합니다','나중에 노출 확률이 떨어져도 한 번 더 올라갈 수 있는 주제입니다','구독자가 적다면 필터창에서 구독자 범위를 조정합니다'],
-    5:['5단계 · 채널 찾기','내 분야 키워드를 검색하고 채널 개설일 순으로 정렬합니다','성장 속도 버튼을 눌러 개설일 최신순에서 성장 속도가 좋은 채널을 봅니다','마음에 들면 팝업 우측 상단의 채널 분석 추가를 누릅니다'],
-    6:['6단계 · 채널 분석','추가한 채널의 영상을 기여도 높은 순으로 정렬합니다','채널 성장에 극적으로 기여한 퍼스트 히트 영상의 주제를 확인합니다','거기서 얻은 키워드를 영상 찾기에 다시 넣고 노출 확률로 거릅니다'],
-    7:['7단계 · 핫 비디오 연계','핫 비디오에서 일자별로 끌리는 제목과 썸네일을 봅니다','주요 키워드에 내가 생각한 키워드를 조합하거나 디벨롭해 새 제목을 만듭니다']
+    1:['1단계 _ 영상 찾기','필터 — 기여도와 성과도 Good·Great만 _ 쇼츠 제거 _ 조회수 5만 이상','정렬 — 구독자가 적은 순','상세 팝업의 영상 조회수 성장 추정 그래프가 지금도 올라가는지 확인합니다','조회수 5만으로 걸어 영상이 세 개 이하로 남으면 1만으로 낮춥니다'],
+    2:['2단계 _ 핫 비디오','홈화면 노출 확률이 큰 영상을 일자별로 봅니다','제목과 썸네일에서 끌리는 것을 영상 수집으로 저장합니다','이미 하고 싶은 주제가 있다면 핫 비디오의 제목을 디벨롭합니다'],
+    3:['3단계 _ 노출 확률','노출 확률 버튼 클릭 후 필터에서 Normal·Good·Great만','정렬 — 노출 확률이 높은 순','최근 24시간 기준 조회수 변화가 있는 영상입니다. 노출 확률은 계속 달라집니다'],
+    4:['4단계 _ 클래식','정렬 — 게시일이 오래된 순','게시한 지 오래됐는데도 노출 확률이 좋은 영상을 영상 수집으로 저장합니다','나중에 노출 확률이 떨어져도 한 번 더 올라갈 수 있는 주제입니다','구독자가 적다면 필터창에서 구독자 범위를 조정합니다'],
+    5:['5단계 _ 채널 찾기','내 분야 키워드를 검색하고 채널 개설일 순으로 정렬합니다','성장 속도 버튼을 눌러 개설일 최신순에서 성장 속도가 좋은 채널을 봅니다','마음에 들면 팝업 우측 상단의 채널 분석 추가를 누릅니다'],
+    6:['6단계 _ 채널 분석','추가한 채널의 영상을 기여도 높은 순으로 정렬합니다','채널 성장에 극적으로 기여한 퍼스트 히트 영상의 주제를 확인합니다','거기서 얻은 키워드를 영상 찾기에 다시 넣고 노출 확률로 거릅니다'],
+    7:['7단계 _ 핫 비디오 연계','핫 비디오에서 일자별로 끌리는 제목과 썸네일을 봅니다','주요 키워드에 내가 생각한 키워드를 조합하거나 디벨롭해 새 제목을 만듭니다']
   };
   $('o_preset').innerHTML=pre.map(function(n){var a=P[n];return '<div class="preset"><div class="st">'+a[0]+'</div>'+a.slice(1).map(function(r){return '<div class="row">'+r+'</div>';}).join('')+'</div>';}).join('');
 
@@ -325,7 +325,7 @@ function render(){
   var one=state.list.filter(function(x){return x.from.indexOf('1단계')===0;}).length;
   var cls=state.list.filter(function(x){return x.from.indexOf('3·4')===0;}).length;
   var tot=state.list.length;
-  $('o_count').innerHTML='<b>수집 목록</b> — 1단계 '+one+'/3 · 클래식 '+cls+'/2 · 합계 '+tot+'/5'
+  $('o_count').innerHTML='<b>수집 목록</b> — 1단계 '+one+'/3 _ 클래식 '+cls+'/2 _ 합계 '+tot+'/5'
     + '<div class="bar"><i style="width:'+Math.min(100,tot/5*100)+'%"></i></div>'
     + (tot>=5?'<div style="margin-top:8px" class="ok">5개를 채웠습니다. 4주차 폴더에 넣습니다.</div>':(cls<2&&one>=3?'<div style="margin-top:8px;font-size:14px;color:var(--t3)">3·4단계에 해당하는 영상이 없으면 1단계로 돌아가 2개를 더 수집합니다.</div>':''));
   $('o_list').innerHTML = tot ? '<div class="card" style="margin-top:12px">'+state.list.map(function(x,i){
