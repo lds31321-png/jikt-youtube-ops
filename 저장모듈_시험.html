@@ -1,0 +1,2425 @@
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>저장 모듈 자동 시험</title>
+<style>
+  body { background:#0b0b0b; color:#e8e8e8; margin:0; padding:24px;
+         font-family:"맑은 고딕","Malgun Gothic",system-ui,sans-serif; line-height:1.6; }
+  h1 { font-size:20px; margin:0 0 4px; color:#fff; }
+  .sub { color:#9a9a9a; font-size:13px; margin-bottom:16px; }
+  .banner { border:1px solid #2ecc71; background:#0e1c14; color:#8ff0b6;
+            border-radius:8px; padding:12px 14px; font-size:13.5px; margin-bottom:18px; }
+  .banner b { color:#2ecc71; }
+  #score { font-size:34px; font-weight:800; margin:14px 0 6px; }
+  .ok  { color:#2ecc71; }
+  .no  { color:#ff5252; }
+  #safety { font-size:13px; margin-bottom:18px; color:#9a9a9a; }
+  .row { border:1px solid #262626; border-left-width:5px; border-radius:8px;
+         padding:10px 14px; margin-bottom:8px; background:#131313; }
+  .row.p { border-left-color:#2ecc71; }
+  .row.f { border-left-color:#ff5252; background:#1d1010; }
+  .name { font-size:14px; font-weight:700; }
+  .detail { font-size:12.5px; color:#b7b7b7; margin-top:4px; white-space:pre-wrap;
+            word-break:break-all; }
+  .row.f .detail { color:#ffb3b3; }
+  button { background:#1f6f43; color:#fff; border:0; border-radius:6px;
+           padding:9px 16px; font-size:14px; cursor:pointer; }
+  button:hover { background:#288954; }
+  h2.sec { font-size:15px; color:#fff; margin:26px 0 8px; }
+  table.keys { width:100%; border-collapse:collapse; font-size:12.5px; }
+  table.keys th, table.keys td { border:1px solid #262626; padding:7px 9px; text-align:left;
+                                 vertical-align:top; word-break:break-all; }
+  table.keys th { background:#161616; color:#cfcfcf; font-weight:700; }
+  .note { margin-top:22px; font-size:12.5px; color:#7d7d7d; border-top:1px solid #232323;
+          padding-top:12px; }
+</style>
+</head>
+<body>
+
+<h1>직트 공통 저장 모듈 — 자동 시험</h1>
+<div class="sub">저장 모듈(jikt_store.js)이 제대로 도는지 마흔아홉 가지를 스스로 돌려 봅니다.</div>
+
+<div class="banner">
+  <b>이 시험은 실제 저장칸을 건드리지 않습니다.</b><br>
+  시험이 시작되면 <b>메모리에만 있는 가짜 저장칸</b>을 저장 모듈에 끼워 넣고, 처음부터 끝까지 거기서만 돕니다.
+  직트의 실제 옛 이름표 다섯 개(jikt_gyeol_v1 · jikt_key_v1 · jikt_money_v1 · jikt_pull_v2 · jikt_title_v1)와
+  새 상자(jikt_store_v1)에는 <b>글자 하나 쓰지 않습니다.</b> 되돌리기 자체가 필요 없습니다.<br>
+  아래 표에서 시험 전후의 실제 이름표 상태를 직접 견주어 보여 드립니다.
+</div>
+
+<div id="score">시험을 시작합니다…</div>
+<div id="safety"></div>
+<button id="again">다시 시험하기</button>
+
+<div id="list" style="margin-top:18px;"></div>
+
+<h2 class="sec">실제 옛 이름표 다섯 개 — 시험 전후 비교 (읽기만 했습니다)</h2>
+<table class="keys" id="keytable">
+  <thead><tr><th style="width:18%">이름표</th><th style="width:10%">같은가</th>
+             <th style="width:16%">길이 (전 → 후)</th><th>앞 40글자 (전 → 후)</th></tr></thead>
+  <tbody></tbody>
+</table>
+
+<div class="note">
+  통과는 초록, 실패는 빨강입니다. 실패한 줄에는 무엇이 어떻게 달랐는지 함께 적힙니다.<br>
+  시험 13번은 옛 다섯 저장칸의 칸을 하나하나 세어, 새 구조로 자리를 찾은 칸과 raw(안전망)에만 남은 칸의 합이
+  원본 칸 수와 같은지 확인합니다.<br>
+  시험 14번은 이관이 도는 동안 옛 이름표 다섯 개에 <b>쓰기가 한 번도 없었는지</b>를 접근 기록으로 확인합니다.<br>
+  시험 15~29번은 1차 검토에서 나온 여덟 가지 결함을 하나씩 되짚습니다 —
+  판번호가 다른 파일 거부(15), 지운 번호 다시 안 쓰기(16·17), 연결 충돌 막기(18~21),
+  칸 순서만 바뀐 자료 다시 안 옮기기(22), 저장칸이 일부만 있거나 깨졌을 때(23·24),
+  이관 도중 오류(25), 역할·형식(26), 모든 목록 줄의 고유 번호(27), 근거 줄 필수값(28),
+  깨진 저장칸 막기(29).<br>
+  시험 30~40번은 <b>2차 검토에서 나온 여덟 가지</b>를 되짚는 반례 시험입니다 —
+  옛 2판 파일은 사람 확인을 요구하며 거부(30), 판번호가 다르면 읽기도 거부(31),
+  풀링 → 기획 항목 → KEY 영상의 한 방향 한 갈래 연결(32),
+  기존 새 자료를 지우지 않는 이관(33), 고유 번호가 빠지면 저장·가져오기 거부(34),
+  v5.1 사건 목록 일곱 개(35), 다른 탭에서 깨졌을 때 저장 막힘(36),
+  측정일 없는 known 은 판정에 안 씀(37), 사유·작업자 공백 거부(38),
+  이관 다섯이 전부 실패하면 저장칸 무변경(39), 숫자가 아닌 발견 단계 거부(40).<br>
+  시험 41~48번은 <b>3차 검토에서 나온 일곱 가지</b>를 되짚습니다 —
+  안쪽 고유 번호가 빠진 3판 저장칸은 읽기도 거부(41),
+  save 에 잘못된 것을 주면 실패하고 원문이 그대로(42),
+  새로 시작 전 원문 백업과 백업 실패 시 중단(43),
+  다른 화면이 저장한 뒤 낡은 사본 저장은 충돌로 거부(44),
+  만들 때의 역할(created_role) 누락·잘못된 값·나중에 바꾸기 거부(45),
+  목록의 숫자·글자 줄과 KEY의 null 겨냥 칸과 겹치는 표시 번호 거부(46),
+  달력에 없는 날짜와 경계 없는 bounded 거부(47),
+  반례 실행기가 아무 경로에서나 c01~c12 열두 개만 실행(48 — 화면에서는 건너뜁니다).<br>
+  시험 49번은 <b>4차 검토에서 나온 한 가지</b>입니다 — 표시 번호를 저장하는 다섯 목록
+  (videos · key_contents · channel.problems · reference_videos · title_candidates) 전부에
+  겹침·잘못된 값 검사를 건다(49).<br>
+  시험 15번부터는 <b>매번 완전히 새 메모리 저장칸</b>을 따로 만들어 씁니다. 여기서도 실제 저장칸은 건드리지 않습니다.
+</div>
+
+<script src="jikt_store.js"></script>
+<script>
+/*
+ * 시험 마흔아홉 가지 — 저장 모듈이 제대로 도는지 스스로 확인합니다.
+ *   1~29 : 앞서 만든 시험
+ *   30~40: 2차 검토에서 나온 결함 여덟 가지를 되짚는 반례 시험 열한 가지 (+ 49번: 4차 보정 — 표시 번호 다섯 목록)
+ *          (글은 반례시험/ 폴더의 파일 그대로입니다 — _mkcounter.js 가 붙여 넣습니다)
+ * 이 글은 시험 화면(저장모듈_시험.html)과 node 시험(test_node.js)에서 똑같이 씁니다.
+ *
+ * 중요 — 이 시험은 실제 저장칸(브라우저 localStorage)을 건드리지 않습니다.
+ *   시험이 시작되면 "메모리에만 있는 가짜 저장칸"을 저장 모듈에 끼워 넣습니다.
+ *   시험이 끝나면 끼운 것을 뺍니다. 직트의 실제 옛 이름표 다섯 개는 한 번도 쓰지 않습니다.
+ *   그래서 되돌리기 자체가 필요 없습니다.
+ */
+(function (root) {
+  'use strict';
+
+  // 옛 이름표 다섯 개 (읽어서 그대로인지 확인만 할 때 씁니다)
+  var LEGACY_KEYS = ['jikt_gyeol_v1', 'jikt_key_v1', 'jikt_money_v1',
+                     'jikt_pull_v2', 'jikt_title_v1'];
+  var WATCH_KEYS = LEGACY_KEYS.concat(['jikt_store_v1']);
+
+  // ── 메모리에만 있는 가짜 저장칸 ────────────────────────────
+  // 누가 무엇을 읽고 썼는지 기록도 남깁니다(시험 14번에서 씁니다).
+  function makeMemoryStorage() {
+    var map = {};
+    var log = [];      // { op:'get'|'set'|'remove', key:'...' }
+    return {
+      getItem: function (k) {
+        log.push({ op: 'get', key: k });
+        return Object.prototype.hasOwnProperty.call(map, k) ? map[k] : null;
+      },
+      setItem: function (k, v) { log.push({ op: 'set', key: k }); map[k] = String(v); },
+      removeItem: function (k) { log.push({ op: 'remove', key: k }); delete map[k]; },
+      key: function (i) { return Object.keys(map)[i]; },
+      get length() { return Object.keys(map).length; },
+      _keys: function () { return Object.keys(map); },
+      _log: function () { return log; },
+      _clearLog: function () { log = []; }
+    };
+  }
+
+  // ── 시험용 가짜 원본 자료 ──────────────────────────────────
+  // 다섯 화면의 저장 코드를 직접 읽어 확인한 "실제 형식" 그대로 만듭니다.
+  function fakeSeeds() {
+    return {
+      // 1. 결 정의 — rows 는 배열의 배열, 칸 이름이 없습니다
+      jikt_gyeol_v1: JSON.stringify({
+        rows: [
+          ['노후에 쓸 돈이 부족하다', '돈', 9, 10],
+          ['하락장에서 손실이 크다', '돈', 7, 9],
+          ['차트를 볼 시간이 없다', '시간', 6, 7]
+        ],
+        one: '적은 자금으로 시장 방향과 무관한 현금흐름을 못 만든다',
+        savedAt: '9/3 14:22'
+      }),
+
+      // 2. 키 콘텐츠 기획 — g1·g1v·g2·g2v·g3·g4 여섯 칸입니다
+      jikt_key_v1: JSON.stringify({
+        five: [
+          ['경제적 불안', '노후 자금이 걱정된다'],
+          ['돈을 벌고 싶다', '안정적인 현금흐름을 원한다'],
+          ['재테크 · 부업', '옵션매도를 알아본다'],
+          ['행동한다', '강의를 신청한다'],
+          ['경제적 자유', '매달 현금흐름이 생긴다']
+        ],
+        vt: [true, false, true, false, false],
+        traps: [false, false, true, false, false],
+        cand: '외국인만 꿀빠는 옵션, 어떻게 하는 건데?',
+        list: [
+          { t: '외국인만 꿀빠는 옵션 어떻게 하는건데?', k: '키' },
+          { t: '재테크 하면 돈 못버는 이유', k: '풀링' }
+        ],
+        g1: '옵션거래', g1v: '28930000',
+        g2: '재테크',   g2v: '120000000',
+        g3: '1. 리스크 관리\n2. 문제 해결 중심',
+        g4: '1. 큰 손실이 걱정될 때\n2. 막막할 때',
+        s1: '하락장에서 계좌가 녹습니다',
+        s2: '방향과 무관한 재테크가 있습니다',
+        s3: '옵션매도 실전반',
+        stg: '1',
+        savedAt: '9/3 14:30'
+      }),
+
+      // 3. 수익화 기획 — 숫자가 전부 글자로 저장됩니다
+      jikt_money_v1: JSON.stringify({
+        rev: '30000000', aov: '1500000', c1: '10', c2: '3.3', c3: '10',
+        curRev: '8200000', curView: '154000', curCnt: '12',
+        todo_t1: true, todo_t2: false, todo_t3: true, todo_t4: false, todo_t5: false,
+        savedAt: '9/3 14:41'
+      }),
+
+      // 4. 풀링 콘텐츠 기획 — savedAt 이 없습니다
+      jikt_pull_v2: JSON.stringify({
+        v: {
+          s_act: '옵션 강의', s_plan: '재테크, 투자, 자산관리',
+          s_want: '안정적인 현금흐름', s_sym: '노후 불안, 고물가',
+          m_pn: '옵션거래', m_pv: '28930000',
+          m_gn: '재테크',   m_gv: '120000000',
+          m_fn: '현금흐름', m_fv: '4400000',
+          v_sub: '1200', v_rev: '350000',
+          t_src1: '30대 직장인', t_src2: '월급만으로는 부족한 상황',
+          t_my1: '40대 은퇴 준비', t_my2: '하락장에서 손실 본 상황',
+          c_title: '재테크 하면 돈 못버는 이유',
+          c_from: '5' + '·' + '6단계에서 찾음',
+          r_key: '1', r_pull: '4',
+          q1: '154000', q2: '4.8', q3: '2100', q4: '38'
+        },
+        c: { g1: true, g2: true, g3: false, g4: true, g5: false,
+             p1: true, p2: false, p3: true },
+        k: '에버그린',
+        list: [
+          { t: '참고 영상 하나', from: '1단계에서 찾음' },
+          { t: '참고 영상 둘',   from: '3' + '·' + '4단계에서 찾음(클래식)' },
+          { t: '참고 영상 셋',   from: '5' + '·' + '6단계에서 찾음' },
+          { t: '참고 영상 넷',   from: '알 수 없는 어딘가에서 찾음' }
+        ]
+      }),
+
+      // 5. 제목 디벨롭 — 여기도 savedAt 이 없습니다
+      jikt_title_v1: JSON.stringify({
+        v: {
+          t0: '옵션매도로 매달 300만원', s0: '매달 300만원',
+          topic: '옵션매도 현금흐름',
+          ref_t: '외국인만 꿀빠는 옵션', ref_s: '외국인만 꿀빠는',
+          t1: '옵션매도 현금흐름 만들기',
+          w2a: '옵션매도', v2a: '28930000', w2b: '옵션투자', v2b: '9100000',
+          t2: '옵션투자 현금흐름 만들기',
+          w3a: '재테크', v3a: '120000000', w3b: '투자', v3b: '340000000',
+          w4a: '안 되는', v4a: '5100000', w4b: '못 버는', v4b: '2200000',
+          t3: '재테크 하면 돈 못 버는 이유',
+          w5: '진짜', w5n: '이유',
+          t4: '재테크 하면 진짜 돈 못 버는 이유',
+          d_day: '30', d_view: '154000', d_pace: '5133',
+          q1: '154000', q2: '4.8', q3: '2100', q4: '38'
+        },
+        c: { v1: true, v2: false, x1: true, x2: true, x3: false,
+             y1: true, y2: false, z1: true, z2: false }
+      })
+    };
+  }
+
+  // 두 자료가 같은지 봅니다(글자로 바꿔서 비교).
+  function same(a, b) { return JSON.stringify(a) === JSON.stringify(b); }
+
+  // 실제 저장칸의 다섯 이름표를 "길이 + 앞 40글자"로만 찍어 둡니다(읽기만 합니다).
+  function snapshotReal(S) {
+    var out = {};
+    var store;
+    try { store = S.defaultStorage(); } catch (e) { return { _없음: '실제 저장칸을 못 찾았습니다' }; }
+    for (var i = 0; i < LEGACY_KEYS.length; i++) {
+      var k = LEGACY_KEYS[i], v = null;
+      try { v = store.getItem(k); } catch (e2) { v = null; }
+      out[k] = (v === null || v === undefined)
+        ? { 있음: false, 길이: 0, 앞40글자: '(없음)' }
+        : { 있음: true, 길이: String(v).length, 앞40글자: String(v).slice(0, 40) };
+    }
+    return out;
+  }
+
+  // ── 시험 본체 ──────────────────────────────────────────────
+  function run(S) {
+    var results = [];
+    var mem = makeMemoryStorage();
+
+    function test(no, name, fn) {
+      try {
+        var d = fn();
+        results.push({ no: no, name: name, ok: true, detail: d || '' });
+      } catch (e) {
+        results.push({ no: no, name: name, ok: false, detail: (e && e.message) || String(e) });
+      }
+    }
+    function must(cond, msg) { if (!cond) throw new Error(msg); }
+    function mustEq(got, want, msg) {
+      if (!same(got, want)) {
+        throw new Error(msg + ' — 기대: ' + JSON.stringify(want) + ' / 실제: ' + JSON.stringify(got));
+      }
+    }
+
+    // 시험 하나를 "완전히 새 메모리 저장칸"에서 돌립니다.
+    // 끝나면 원래 메모리 저장칸으로 돌아옵니다. 실제 저장칸은 여전히 손대지 않습니다.
+    function withFresh(seedObj, fn) {
+      var m = makeMemoryStorage();
+      for (var kk in seedObj) {
+        if (Object.prototype.hasOwnProperty.call(seedObj, kk)) m.setItem(kk, seedObj[kk]);
+      }
+      m._clearLog();
+      S.useStorage(m);
+      try { return fn(m); }
+      finally { S.useStorage(mem); }
+    }
+
+    // 같은 자료인데 칸 이름 순서만 뒤집습니다(값은 하나도 안 바꿉니다).
+    function reorderKeys(text) {
+      var obj = JSON.parse(text);
+      var keys = [];
+      for (var k in obj) if (Object.prototype.hasOwnProperty.call(obj, k)) keys.push(k);
+      keys.reverse();
+      var out = {};
+      for (var i = 0; i < keys.length; i++) out[keys[i]] = obj[keys[i]];
+      return JSON.stringify(out);
+    }
+
+    // 옛 이름표에 쓰기가 있었는지 세어 봅니다.
+    function legacyWrites(m) {
+      var log = m._log(), out = [];
+      for (var i = 0; i < log.length; i++) {
+        var e = log[i];
+        if ((e.op === 'set' || e.op === 'remove') && LEGACY_KEYS.indexOf(e.key) !== -1) {
+          out.push(e.op + ' ' + e.key);
+        }
+      }
+      return out;
+    }
+
+    // 여기서부터 저장 모듈은 메모리 저장칸만 씁니다. 실제 저장칸은 손대지 않습니다.
+    S.useStorage(mem);
+
+    try {
+      var seeds = fakeSeeds();
+      for (var k in seeds) if (seeds.hasOwnProperty(k)) mem.setItem(k, seeds[k]);
+      var seedSnapshot = {};
+      for (var k2 in seeds) if (seeds.hasOwnProperty(k2)) seedSnapshot[k2] = mem.getItem(k2);
+
+      mem._clearLog();                 // 여기서부터가 "이관 중 접근 기록"입니다
+      var firstReport = null, secondReport = null;
+
+      // 1. 이관을 두 번 돌려도 자료가 중복되지 않는다
+      test(1, '이관을 두 번 돌려도 자료가 중복되지 않는다', function () {
+        firstReport = S.migrate();
+        var a = S.load();
+        var c1 = { v: a.videos.length, k: a.key_contents.length, l: a.legacy_rows.length,
+                   o: a.orphan_title_candidates.length, p: a.channel.problems.length,
+                   r: a.videos[0].reference_videos.length };
+        secondReport = S.migrate();
+        var b = S.load();
+        var c2 = { v: b.videos.length, k: b.key_contents.length, l: b.legacy_rows.length,
+                   o: b.orphan_title_candidates.length, p: b.channel.problems.length,
+                   r: b.videos[0].reference_videos.length };
+        mustEq(c2, c1, '두 번째 이관 뒤 줄 수가 달라졌습니다');
+        must(firstReport.totals.migrated === 5,
+             '첫 이관에서 다섯 열쇠가 다 옮겨져야 합니다 (실제 ' + firstReport.totals.migrated + ')');
+        must(secondReport.totals.skipped_same === 5,
+             '두 번째는 다섯 열쇠 다 건너뛰어야 합니다 (실제 ' + secondReport.totals.skipped_same + ')');
+        return '첫 이관 ' + firstReport.totals.rows + '줄, 두 번째는 모두 건너뜀. 줄 수 ' + JSON.stringify(c1);
+      });
+
+      // 2. 옛 저장칸 다섯 개가 글자 하나까지 그대로다
+      test(2, '옛 저장칸 다섯 개가 글자 하나까지 그대로다', function () {
+        for (var kk in seedSnapshot) {
+          if (!seedSnapshot.hasOwnProperty(kk)) continue;
+          var now = mem.getItem(kk);
+          must(now === seedSnapshot[kk], kk + ' 의 내용이 바뀌었습니다');
+        }
+        return '다섯 열쇠 모두 글자 하나까지 그대로';
+      });
+
+      // 3. KEY 영상이 없어도 풀링 영상이 기획 항목을 겨냥해 둔다 (v5.1 4절)
+      var st = S.load();
+      var kcA, pullA;
+      test(3, 'KEY 영상이 없어도 풀링 영상이 기획 항목을 겨냥해 둔다', function () {
+        kcA = S.makeKeyContent({ display_no: S.nextDisplayNo(st, 'key_contents', st.key_contents),
+                                 name: '아직 영상 없는 키콘텐츠', order: 9 });
+        st.key_contents.push(kcA);
+        // 겨냥하는 쪽은 "풀링" 영상입니다. KEY 영상은 아직 없습니다.
+        pullA = S.makeVideo({ display_no: S.nextDisplayNo(st, 'videos', st.videos),
+                              title: '겨냥해 둔 풀링 영상', role: 'PULL', format: 'SHORT' });
+        st.videos.push(pullA);
+        S.setPullTarget(st, pullA.id, kcA.uid, { changed_by: '직트', reason: '겨냥 정함' });
+        S.save(st);
+        var re = S.load();
+        var v = null, c = null, x;
+        for (x = 0; x < re.videos.length; x++) if (re.videos[x].id === pullA.id) v = re.videos[x];
+        for (x = 0; x < re.key_contents.length; x++) if (re.key_contents[x].uid === kcA.uid) c = re.key_contents[x];
+        must(v && v.key_content_uid === kcA.uid, '풀링 영상이 겨냥을 잃었습니다');
+        must(c && c.linked_video_id === null, 'KEY 영상이 아직 없으니 linked_video_id는 비어 있어야 합니다');
+        // KEY 영상이 아직 없어도 기획 항목은 있으므로 가리킬 곳이 있습니다.
+        return '풀링 영상의 겨냥은 남고 linked_video_id는 비어 있음';
+      });
+
+      // 4. KEY 영상이 생긴 뒤 기획 항목이 linked_video_id로 그 영상을 가리킨다
+      var keyA;
+      test(4, 'KEY 영상이 생긴 뒤 기획 항목이 linked_video_id로 이어진다', function () {
+        var s2 = S.load();
+        keyA = S.makeVideo({ display_no: S.nextDisplayNo(s2, 'videos', s2.videos),
+                             title: '뒤늦게 만든 KEY 영상', role: 'KEY', format: 'LONG' });
+        must(!('key_content_uid' in keyA), 'KEY 영상에 겨냥 칸을 두면 안 됩니다');
+        s2.videos.push(keyA);
+        S.linkKeyContent(s2, kcA.uid, keyA.id, { changed_by: '직트', reason: '영상 생김' });
+        S.save(s2);
+        var re = S.load();
+        var c = null, v = null, pv = null, x;
+        for (x = 0; x < re.key_contents.length; x++) if (re.key_contents[x].uid === kcA.uid) c = re.key_contents[x];
+        for (x = 0; x < re.videos.length; x++) {
+          if (re.videos[x].id === keyA.id) v = re.videos[x];
+          if (re.videos[x].id === pullA.id) pv = re.videos[x];
+        }
+        must(c && c.linked_video_id === keyA.id, 'linked_video_id가 KEY 영상에 이어지지 않았습니다');
+        must(v && !('key_content_uid' in v), 'KEY 영상에 풀링용 포인터가 또 생겼습니다');
+        must(pv && pv.key_content_uid === kcA.uid, '풀링 영상의 겨냥이 사라졌습니다');
+        return '풀링 → 기획 항목 → KEY 영상. 길은 한 방향 한 갈래';
+      });
+
+      // 5. 후보를 지운 뒤에도 다른 후보의 표시 번호가 안 바뀐다
+      test(5, '후보를 지운 뒤에도 다른 후보의 표시 번호가 안 바뀐다', function () {
+        var s2 = S.load();
+        var v = S.makeVideo({ display_no: S.nextDisplayNo(s2, 'videos', s2.videos),
+                              title: '번호 시험 영상', role: 'PULL' });
+        s2.videos.push(v);
+        var cName = S.videoListCounter(v.id, 'title_candidates');
+        var n;
+        for (n = 0; n < 3; n++) {
+          v.title_candidates.push(S.makeTitleCandidate({
+            display_no: S.nextDisplayNo(s2, cName, v.title_candidates), text: '후보 ' + (n + 1) }));
+        }
+        var before = [];
+        for (n = 0; n < v.title_candidates.length; n++) before.push(v.title_candidates[n].display_no);
+        mustEq(before, [1, 2, 3], '처음 번호가 1,2,3이어야 합니다');
+        v.title_candidates.splice(1, 1);                 // 가운데(2번) 삭제
+        var after = [];
+        for (n = 0; n < v.title_candidates.length; n++) after.push(v.title_candidates[n].display_no);
+        mustEq(after, [1, 3], '지운 뒤 남은 번호가 당겨졌습니다');
+        var nn = S.nextDisplayNo(s2, cName, v.title_candidates);
+        must(nn === 4, '다음 번호는 4여야 합니다(지운 2를 다시 쓰면 안 됩니다). 실제 ' + nn);
+        v.title_candidates.push(S.makeTitleCandidate({ display_no: nn, text: '후보 넷' }));
+        S.save(s2);
+        var re = S.load(), vv = null;
+        for (n = 0; n < re.videos.length; n++) if (re.videos[n].id === v.id) vv = re.videos[n];
+        var final = [];
+        for (n = 0; n < vv.title_candidates.length; n++) final.push(vv.title_candidates[n].display_no);
+        mustEq(final, [1, 3, 4], '저장 뒤 번호가 달라졌습니다');
+        return '번호 1,3 유지 → 새 후보는 4';
+      });
+
+      // 6. 5단계와 6단계가 각각 그대로 남는다
+      test(6, '5단계와 6단계가 각각 그대로 남는다', function () {
+        var re = S.load();
+        var v = null, x;
+        for (x = 0; x < re.videos.length; x++) {
+          if (re.videos[x].id === re.channel.migrated_video_id) v = re.videos[x];
+        }
+        must(v, '이관으로 만든 영상을 못 찾았습니다');
+        var got = [], froms = [];
+        for (x = 0; x < v.reference_videos.length; x++) {
+          got.push(v.reference_videos[x].found_steps);
+          froms.push(v.reference_videos[x].from_raw);
+        }
+        mustEq(got, [[1], [3, 4], [5, 6], []], '단계 기록이 뭉개졌습니다');
+        must(froms[3] === '알 수 없는 어딘가에서 찾음', '못 알아본 값의 원문이 from_raw 에 안 남았습니다');
+        // 못 알아본 값이 이관 기록에 남았는지
+        var noted = false;
+        for (x = 0; x < re.migration_log.length; x++) {
+          var lg = re.migration_log[x];
+          if (lg && lg.kind === 'unknown_value' && String(lg.message).indexOf('못 알아본 값') !== -1) noted = true;
+        }
+        must(noted, '못 알아본 값이 이관 기록에 안 남았습니다');
+        // 5단계만 있던 줄에 6단계를 더해도 5가 지워지지 않아야 합니다.
+        var solo = S.makeReferenceVideo({ display_no: 99, title: '5단계만', found_steps: [5] });
+        S.addFoundStep(solo, 6);
+        S.addFoundStep(solo, 6);   // 두 번 넣어도 한 번만
+        mustEq(solo.found_steps, [5, 6], '단계를 더한 뒤 모양이 틀립니다');
+        return '이관 직후 [[1],[3,4],[5,6],[]] — 5와 6을 따로 보존, 못 알아본 값은 from_raw + 이관 기록';
+      });
+
+      // 7. bounded·unknown 측정값은 저장되지만 판정에는 안 쓰인다
+      test(7, 'bounded·unknown 측정값은 저장되지만 판정에는 안 쓰인다', function () {
+        var s2 = S.load();
+        var v = S.makeVideo({ display_no: S.nextDisplayNo(s2, 'videos', s2.videos),
+                              title: '측정 시험 영상', role: 'PULL' });
+        s2.videos.push(v);
+        var known = S.makeMeasurement({ value: 120000, unit: '회', date_status: 'known',
+                                        measured_at: '2026-09-01T00:00:00.000Z' });
+        var bounded = S.makeMeasurement({ value: 90000, unit: '회', date_status: 'bounded',
+                                          measured_after: '2026-06-01T00:00:00.000Z',
+                                          measured_before: '2026-09-01T00:00:00.000Z',
+                                          date_note: '사이 어디쯤' });
+        var unknown = S.makeMeasurement({ value: 50000, unit: '회', date_status: 'unknown',
+                                          date_note: '언제 잰 건지 모름' });
+        v.measurements.push(known, bounded, unknown);
+        S.save(s2);
+        var re = S.load(), vv = null, x;
+        for (x = 0; x < re.videos.length; x++) if (re.videos[x].id === v.id) vv = re.videos[x];
+        must(vv.measurements.length === 3, '세 개 다 저장돼야 합니다');
+        var judge = [];
+        for (x = 0; x < vv.measurements.length; x++) judge.push(S.isJudgeable(vv.measurements[x]));
+        mustEq(judge, [true, false, false], '판정 가능 여부가 틀립니다');
+        must(vv.measurements[1].measured_after && vv.measurements[1].measured_before,
+             'bounded의 앞뒤 시각이 사라졌습니다');
+        // 이관으로 만든 측정값은 전부 unknown 이라 판정에 안 쓰입니다.
+        var migrated = re.channel.monetization.measurements
+                       .concat(re.channel.subscribers, re.channel.youtube_revenue);
+        for (x = 0; x < migrated.length; x++) {
+          must(migrated[x].date_status === 'unknown', '이관 측정값은 전부 unknown 이라야 합니다');
+          must(S.isJudgeable(migrated[x]) === false, '이관 측정값이 판정에 쓰이면 안 됩니다');
+          must(!!migrated[x].date_note, '이관 측정값에 사정이 안 적혔습니다');
+        }
+        return '3개 저장, 판정 가능한 건 known 1개뿐. 이관 측정값 ' + migrated.length + '개는 전부 unknown';
+      });
+
+      // 8. 월매출 기준과 구독자 기준이 서로 다른 규칙판으로 복원된다
+      test(8, '월매출 기준과 구독자 기준이 서로 다른 규칙판으로 복원된다', function () {
+        var s2 = S.load();
+        S.setRule(s2, { rule_id: 'MONTHLY_REVENUE_MIN', changed_by: '직트',
+          value: { metric_id: 'monthly_revenue', operator: '>=', threshold: 3000000, unit: '원' },
+          change_reason: '처음 정함' });
+        S.setRule(s2, { rule_id: 'SUBSCRIBER_MIN', changed_by: '직트',
+          value: { metric_id: 'subscribers', operator: '>=', threshold: 1000, unit: '명' },
+          change_reason: '처음 정함' });
+        S.setRule(s2, { rule_id: 'MONTHLY_REVENUE_MIN', changed_by: '직트',
+          value: { metric_id: 'monthly_revenue', operator: '>=', threshold: 5000000, unit: '원' },
+          change_reason: '기준 올림' });
+        S.setRule(s2, { rule_id: 'SUBSCRIBER_MIN', changed_by: '직트',
+          value: { metric_id: 'subscribers', operator: '>=', threshold: 3000, unit: '명' },
+          change_reason: '기준 올림' });
+        S.save(s2);
+        var re = S.load();
+        mustEq(S.getRuleVersion(re, 'MONTHLY_REVENUE_MIN', 1).threshold, 3000000, '월매출 1판');
+        mustEq(S.getRuleVersion(re, 'MONTHLY_REVENUE_MIN', 2).threshold, 5000000, '월매출 2판');
+        mustEq(S.getRuleVersion(re, 'SUBSCRIBER_MIN', 1).threshold, 1000, '구독자 1판');
+        mustEq(S.getRuleVersion(re, 'SUBSCRIBER_MIN', 2).threshold, 3000, '구독자 2판');
+        mustEq(S.getRule(re, 'MONTHLY_REVENUE_MIN').threshold, 5000000, '월매출 지금값');
+        mustEq(S.getRule(re, 'SUBSCRIBER_MIN').threshold, 3000, '구독자 지금값');
+        var h1 = S.getRuleHistory(re, 'MONTHLY_REVENUE_MIN'), h2 = S.getRuleHistory(re, 'SUBSCRIBER_MIN');
+        mustEq([h1[0].version, h1[1].version], [1, 2], '월매출 판번호');
+        mustEq([h2[0].version, h2[1].version], [1, 2], '구독자 판번호');
+        must(re.current_rules === undefined, '지금값을 따로 저장하면 안 됩니다');
+        return '두 규칙이 각각 1판·2판으로 따로 복원됨';
+      });
+
+      // 9. 35자 → 23자 변경이 대체로 이어진다(무효 아님)
+      test(9, '35자 → 23자 변경이 대체로 이어진다(무효 아님)', function () {
+        var s2 = S.load();
+        var v = S.makeVideo({ display_no: S.nextDisplayNo(s2, 'videos', s2.videos),
+                              title: '길이 판정 영상', role: 'PULL' });
+        s2.videos.push(v);
+        var old = S.makeLengthJudgment({ applied_case_id: 'LONGFORM_DEFAULT', limit: 35, length: 30 });
+        S.pushRow(v.title_length_judgement, old);
+        var neo = S.makeLengthJudgment({ applied_case_id: 'SHORT_TO_LONGFORM', limit: 23, length: 30 });
+        S.supersede(v.title_length_judgement, neo, old.event_id);
+        S.save(s2);
+        var re = S.load(), vv = null, x;
+        for (x = 0; x < re.videos.length; x++) if (re.videos[x].id === v.id) vv = re.videos[x];
+        must(vv.title_length_judgement.length === 2, '두 줄 다 남아야 합니다');
+        must(vv.title_length_judgement[0].void === false, '옛 줄을 무효로 찍으면 안 됩니다');
+        must(vv.title_length_judgement[0].limit === 35, '옛 줄의 35자가 바뀌면 안 됩니다');
+        must(vv.title_length_judgement[1].limit === 23, '새 줄은 23자여야 합니다');
+        must(vv.title_length_judgement[1].supersedes_event_id === old.event_id,
+             '새 줄이 옛 줄을 가리키지 않습니다');
+        must(vv.title_length_judgement[0].pass === true && vv.title_length_judgement[1].pass === false,
+             '통과 여부 계산이 틀립니다(30자는 35 통과, 23 불통과)');
+        // 이관은 길이 판정을 하나도 만들지 않아야 합니다.
+        var mv = null;
+        for (x = 0; x < re.videos.length; x++) if (re.videos[x].id === re.channel.migrated_video_id) mv = re.videos[x];
+        must(mv && mv.title_length_judgement.length === 0, '이관이 길이 판정을 만들었습니다');
+        var noted = false;
+        for (x = 0; x < re.migration_log.length; x++) {
+          if (re.migration_log[x] && re.migration_log[x].kind === 'not_created') noted = true;
+        }
+        must(noted, '길이 판정을 안 만든 사정이 이관 기록에 없습니다');
+        return '35자 줄은 그대로 살아 있고 23자 줄이 supersedes_event_id로 이어짐. 이관은 판정 0줄';
+      });
+
+      // 10. 잘못 넣은 판정만 무효 처리되고 무효자·시각·이유가 남는다
+      test(10, '잘못 넣은 판정만 무효 처리되고 무효자·시각·이유가 남는다', function () {
+        var s2 = S.load();
+        var v = S.makeVideo({ display_no: S.nextDisplayNo(s2, 'videos', s2.videos),
+                              title: '무효 시험 영상', role: 'PULL' });
+        s2.videos.push(v);
+        var g1 = S.pushRow(v.gate_results, { gate_id: 'G1', pass: true, void: false });
+        var g2 = S.pushRow(v.gate_results, { gate_id: 'G2', pass: true, void: false });
+        var g3 = S.pushRow(v.gate_results, { gate_id: 'G3', pass: false, void: false });
+        S.voidEvent(g2, { void_reason: '숫자를 잘못 넣었습니다', voided_by: '직트' });
+        S.save(s2);
+        var re = S.load(), vv = null, x;
+        for (x = 0; x < re.videos.length; x++) if (re.videos[x].id === v.id) vv = re.videos[x];
+        var gs = vv.gate_results;
+        must(gs.length === 3, '세 줄 다 남아야 합니다');
+        must(gs[0].void === false && gs[2].void === false, '다른 줄까지 무효가 됐습니다');
+        must(gs[1].void === true, '대상 줄이 무효가 아닙니다');
+        must(gs[1].void_reason === '숫자를 잘못 넣었습니다', '무효 이유가 없습니다');
+        must(gs[1].voided_by === '직트', '무효자가 없습니다');
+        must(!!gs[1].voided_at, '무효 시각이 없습니다');
+        must(gs[1].gate_id === 'G2', '무효 처리된 줄이 바뀌었습니다');
+        return '가운데 한 줄만 무효, 이유·시각·무효자 모두 남음';
+      });
+
+      // 11. 내보내기 → 가져오기 뒤에 고유 번호·이력이 그대로다
+      test(11, '내보내기 → 가져오기 뒤에 고유 번호·이력이 그대로다', function () {
+        var before = S.load();
+        var text = S.exportJson(before);
+        var res = S.importJson(text);
+        must(res.ok === true, '가져오기가 실패했습니다: ' + res.reason);
+        var after = S.load();
+        mustEq(after, before, '가져온 뒤 자료가 달라졌습니다');
+        must(after.videos.length === before.videos.length, '영상 수가 다릅니다');
+        for (var x = 0; x < before.videos.length; x++) {
+          must(after.videos[x].id === before.videos[x].id, x + '번째 영상 고유 번호가 다릅니다');
+        }
+        must(after.migration_log.length === before.migration_log.length, '이관 기록 수가 다릅니다');
+        return '영상 ' + after.videos.length + '개 · 이관기록 ' +
+               after.migration_log.length + '줄 · 규칙 ' + after.rules.length + '개 모두 동일';
+      });
+
+      // 12. 깨진 JSON은 현재 자료를 덮어쓰지 않는다
+      test(12, '깨진 JSON은 현재 자료를 덮어쓰지 않는다', function () {
+        var before = S.load();
+        var beforeText = mem.getItem('jikt_store_v1');
+        var bad = [
+          '{ "videos": [ 깨짐',                                   // JSON 자체가 깨짐
+          '[1,2,3]',                                              // 맨 위가 객체가 아님
+          '{"videos": []}',                                       // 판번호 없음
+          '{"schema_version": ' + S.SCHEMA_VERSION + ', "videos": "배열아님"}'           // videos가 배열이 아님
+        ];
+        var reasons = [];
+        for (var x = 0; x < bad.length; x++) {
+          var r = S.importJson(bad[x]);
+          must(r.ok === false, (x + 1) + '번째 나쁜 자료를 받아들였습니다');
+          must(!!r.reason, (x + 1) + '번째에 이유가 없습니다');
+          reasons.push(r.reason);
+          must(mem.getItem('jikt_store_v1') === beforeText,
+               (x + 1) + '번째에서 저장칸이 덮어써졌습니다');
+        }
+        mustEq(S.load(), before, '현재 자료가 바뀌었습니다');
+        return '네 가지 나쁜 자료 모두 거부, 자료 그대로 — ' + reasons.join(' / ');
+      });
+
+      // 13. 옛 형식의 모든 칸이 새 구조에 자리를 찾는다
+      test(13, '옛 형식의 모든 칸이 새 구조에 자리를 찾는다', function () {
+        must(firstReport, '1번 시험이 먼저 돌아야 합니다');
+        var cov = firstReport.field_coverage;
+        var re = S.load();
+        var lines = [], tot = 0, pla = 0, rw = 0;
+        for (var i = 0; i < LEGACY_KEYS.length; i++) {
+          var key = LEGACY_KEYS[i];
+          var c = cov[key];
+          must(c, key + ' 의 칸 세기 결과가 없습니다');
+
+          // (가) 원본 칸 수 = 자리를 찾은 칸 + raw 에만 남은 칸
+          must(c.total === c.placed.length + c.raw_only.length,
+               key + ' 의 칸 수가 안 맞습니다: ' + c.total + ' ≠ ' +
+               c.placed.length + ' + ' + c.raw_only.length);
+
+          // (나) 원본 칸 수를 여기서 다시 세어 봅니다(보고서 말만 믿지 않습니다)
+          var origin = JSON.parse(seedSnapshot[key]);
+          var recount = S.leafPaths(origin).length;
+          must(recount === c.total, key + ' 를 다시 세니 칸 수가 다릅니다: ' + recount + ' ≠ ' + c.total);
+
+          // (다) raw 에만 남은 칸은 실제로 raw 안에서 꺼내져야 합니다
+          var rawRoot = S.getLegacyRaw(re, key);
+          must(rawRoot !== undefined, key + ' 의 원본이 raw 에 안 남았습니다');
+          for (var j = 0; j < c.raw_only.length; j++) {
+            var got = S.getByPath(rawRoot, c.raw_only[j]);
+            must(got !== undefined, key + ' 의 ' + c.raw_only[j] + ' 가 raw 에서 안 나옵니다');
+          }
+          tot += c.total; pla += c.placed.length; rw += c.raw_only.length;
+          lines.push(key + ' ' + c.total + '칸(자리 ' + c.placed.length + ' · raw만 ' + c.raw_only.length + ')');
+        }
+        must(tot === pla + rw, '전체 합이 안 맞습니다');
+        // 대기실(legacy_rows)은 이제 비어 있어야 합니다.
+        must(re.legacy_rows.length === 0,
+             '대기실에 남은 줄이 있습니다: ' + re.legacy_rows.length);
+        return '원본 ' + tot + '칸 = 자리 찾음 ' + pla + '칸 + raw에만 ' + rw + '칸. 대기실 0줄. ' +
+               lines.join(' / ');
+      });
+
+      // 14. 이관은 실제 옛 이름표를 한 번도 쓰지 않는다
+      test(14, '이관은 실제 옛 이름표에 한 번도 쓰지 않는다', function () {
+        var log = mem._log();
+        var writes = [], reads = 0;
+        for (var i = 0; i < log.length; i++) {
+          var e = log[i];
+          if (e.op === 'get' && LEGACY_KEYS.indexOf(e.key) !== -1) reads++;
+          if ((e.op === 'set' || e.op === 'remove') && LEGACY_KEYS.indexOf(e.key) !== -1) {
+            writes.push(e.op + ' ' + e.key);
+          }
+        }
+        must(writes.length === 0,
+             '옛 이름표에 쓰기가 있었습니다: ' + writes.join(', '));
+        must(reads > 0, '옛 이름표를 읽지도 않았습니다(이관이 안 돈 것 같습니다)');
+        // 저장 모듈이 실제 브라우저 저장칸이 아니라 메모리 저장칸을 쓰고 있는지도 확인
+        must(mem._keys().indexOf('jikt_store_v1') !== -1,
+             '새 상자가 메모리 저장칸에 안 들어 있습니다');
+        return '옛 이름표 읽기 ' + reads + '번 · 쓰기 0번. 시험은 메모리 저장칸에서만 돌았습니다';
+      });
+
+
+      // ══ 여기서부터 보정 뒤 새로 넣은 시험입니다 (15~29) ══
+
+      // 15. 판번호가 다른 JSON을 거부하고 현재 자료가 안 바뀐다
+      test(15, '판번호가 다른 JSON을 거부하고 현재 자료가 안 바뀐다', function () {
+        return withFresh({}, function (m) {
+          var base = S.load();
+          base.videos.push(S.makeVideo({ display_no: 1, role: 'KEY', title: '지켜야 할 영상' }));
+          S.save(base);
+          var beforeText = m.getItem('jikt_store_v1');
+          var beforeStore = S.load();
+          var bads = [
+            { name: '999판', text: JSON.stringify({ schema_version: 999, videos: [] }) },
+            { name: '0판',   text: JSON.stringify({ schema_version: 0, videos: [] }) },
+            { name: '글자판', text: JSON.stringify({ schema_version: '2', videos: [] }) }
+          ];
+          var reasons = [];
+          for (var i = 0; i < bads.length; i++) {
+            var r = S.importJson(bads[i].text);
+            must(r.ok === false, bads[i].name + ' 을 받아들였습니다(거부해야 합니다)');
+            must(!!r.reason, bads[i].name + ' 에 사람이 읽을 사유가 없습니다');
+            reasons.push(bads[i].name + ' → ' + r.reason);
+            must(m.getItem('jikt_store_v1') === beforeText,
+                 bads[i].name + ' 에서 저장칸이 덮어써졌습니다');
+          }
+          mustEq(S.load(), beforeStore, '현재 자료가 바뀌었습니다');
+          // 지금 판번호는 그대로 받아들여야 합니다.
+          var good = S.importJson(S.exportJson(beforeStore));
+          must(good.ok === true, '지금 판번호까지 거부하면 안 됩니다: ' + good.reason);
+          return reasons.join(' / ');
+        });
+      });
+
+      // 16. 가장 큰 표시 번호를 지워도 그 번호를 다시 안 쓴다
+      test(16, '가장 큰 표시 번호를 지워도 그 번호를 다시 안 쓴다', function () {
+        return withFresh({}, function () {
+          var s2 = S.load();
+          var v = S.makeVideo({ display_no: S.nextDisplayNo(s2, 'videos', s2.videos),
+                                title: '번호표 시험 영상', role: 'PULL' });
+          s2.videos.push(v);
+          var cName = S.videoListCounter(v.id, 'title_candidates');
+          var i;
+          for (i = 0; i < 3; i++) {
+            v.title_candidates.push(S.makeTitleCandidate({
+              display_no: S.nextDisplayNo(s2, cName, v.title_candidates), text: '후보 ' + (i + 1) }));
+          }
+          var got = [];
+          for (i = 0; i < v.title_candidates.length; i++) got.push(v.title_candidates[i].display_no);
+          mustEq(got, [1, 2, 3], '처음 번호가 1,2,3이어야 합니다');
+
+          v.title_candidates.pop();                       // 가장 큰 번호(3)를 지웁니다
+          var nn = S.nextDisplayNo(s2, cName, v.title_candidates);
+          must(nn === 4, '가장 큰 번호 3을 지운 뒤 다음 번호는 4여야 합니다. 실제 ' + nn);
+          v.title_candidates.push(S.makeTitleCandidate({ display_no: nn, text: '후보 넷' }));
+          S.save(s2);
+
+          // 저장하고 다시 읽어도 번호표가 살아 있어야 합니다.
+          var re = S.load(), vv = null;
+          for (i = 0; i < re.videos.length; i++) if (re.videos[i].id === v.id) vv = re.videos[i];
+          var nn2 = S.nextDisplayNo(re, cName, vv.title_candidates);
+          must(nn2 === 5, '다시 읽은 뒤 다음 번호는 5여야 합니다. 실제 ' + nn2);
+          var fin = [];
+          for (i = 0; i < vv.title_candidates.length; i++) fin.push(vv.title_candidates[i].display_no);
+          mustEq(fin, [1, 2, 4], '남은 번호가 달라졌습니다');
+          return '1,2,3에서 3을 지우고 다음 번호 4 → 저장 뒤 다음 번호 5. 번호표 ' +
+                 JSON.stringify(re.counters[cName]);
+        });
+      });
+
+      // 17. 목록을 전부 지웠다 다시 넣어도 번호가 1로 안 돌아간다
+      test(17, '목록을 전부 지웠다 다시 넣어도 번호가 1로 안 돌아간다', function () {
+        return withFresh({}, function () {
+          var s2 = S.load();
+          var v = S.makeVideo({ display_no: S.nextDisplayNo(s2, 'videos', s2.videos),
+                                title: '싹 지우기 시험', role: 'PULL' });
+          s2.videos.push(v);
+          var cName = S.videoListCounter(v.id, 'title_candidates');
+          var i;
+          for (i = 0; i < 3; i++) {
+            v.title_candidates.push(S.makeTitleCandidate({
+              display_no: S.nextDisplayNo(s2, cName, v.title_candidates), text: '후보 ' + (i + 1) }));
+          }
+          v.title_candidates.length = 0;                  // 전부 지웁니다
+          S.save(s2);
+          var re = S.load(), vv = null;
+          for (i = 0; i < re.videos.length; i++) if (re.videos[i].id === v.id) vv = re.videos[i];
+          must(vv.title_candidates.length === 0, '전부 지워져 있어야 합니다');
+          var nn = S.nextDisplayNo(re, cName, vv.title_candidates);
+          must(nn === 4, '싹 지워도 다음 번호는 4여야 합니다(1로 돌아가면 안 됩니다). 실제 ' + nn);
+          // 영상 목록도 같습니다.
+          var vn = S.nextDisplayNo(re, 'videos', []);
+          must(vn === 2, '영상 목록 번호표도 1로 돌아가면 안 됩니다. 실제 ' + vn);
+          return '후보 1,2,3을 다 지워도 다음 번호 4 / 영상 번호표도 2';
+        });
+      });
+
+      // 18. 이미 연결된 기획 항목을 다른 KEY 영상에 연결하면 실패하고 아무것도 안 바뀐다
+      test(18, '이미 연결된 기획 항목을 다른 영상에 연결하면 실패하고 양쪽이 하나도 안 바뀐다', function () {
+        return withFresh({}, function () {
+          var s2 = S.load();
+          var k1 = S.makeKeyContent({ display_no: 1, name: 'K1' });
+          s2.key_contents.push(k1);
+          var v1 = S.makeVideo({ display_no: 1, title: 'V1', role: 'KEY' });
+          var v2 = S.makeVideo({ display_no: 2, title: 'V2', role: 'KEY' });
+          s2.videos.push(v1, v2);
+          S.linkKeyContent(s2, k1.uid, v1.id);
+          S.save(s2);
+
+          var before = JSON.stringify(S.load());
+          var s3 = S.load();
+          var threw = false, msg = '';
+          try { S.linkKeyContent(s3, k1.uid, v2.id); }
+          catch (e) { threw = true; msg = e.message; }
+          must(threw, '이미 연결된 기획 항목을 다른 영상에 연결했는데 실패하지 않았습니다');
+
+          var kk = null, a = null, b = null, i;
+          for (i = 0; i < s3.key_contents.length; i++) if (s3.key_contents[i].uid === k1.uid) kk = s3.key_contents[i];
+          for (i = 0; i < s3.videos.length; i++) {
+            if (s3.videos[i].id === v1.id) a = s3.videos[i];
+            if (s3.videos[i].id === v2.id) b = s3.videos[i];
+          }
+          must(kk.linked_video_id === v1.id, 'K1이 V1을 가리켜야 합니다');
+          must(!('key_content_uid' in a), 'KEY 영상 V1에 포인터가 생기면 안 됩니다');
+          must(!('key_content_uid' in b), 'KEY 영상 V2에 포인터가 생기면 안 됩니다');
+          mustEq(JSON.stringify(S.load()), before, '저장된 자료가 바뀌었습니다');
+          return '실패 사유: ' + msg;
+        });
+      });
+
+      // 19. 이미 다른 기획 항목이 붙은 KEY 영상에 또 붙이면 실패한다
+      test(19, '이미 연결된 영상을 다른 기획 항목에 연결해도 실패하고 아무것도 안 바뀐다', function () {
+        return withFresh({}, function () {
+          var s2 = S.load();
+          var k1 = S.makeKeyContent({ display_no: 1, name: 'K1' });
+          var k2 = S.makeKeyContent({ display_no: 2, name: 'K2' });
+          s2.key_contents.push(k1, k2);
+          var v1 = S.makeVideo({ display_no: 1, title: 'V1', role: 'KEY' });
+          s2.videos.push(v1);
+          S.linkKeyContent(s2, k1.uid, v1.id);
+          S.save(s2);
+
+          var before = JSON.stringify(S.load());
+          var s3 = S.load();
+          var threw = false, msg = '';
+          try { S.linkKeyContent(s3, k2.uid, v1.id); }
+          catch (e) { threw = true; msg = e.message; }
+          must(threw, '이미 다른 기획 항목과 묶인 영상에 연결했는데 실패하지 않았습니다');
+          var kk1 = null, kk2 = null, i;
+          for (i = 0; i < s3.key_contents.length; i++) {
+            if (s3.key_contents[i].uid === k1.uid) kk1 = s3.key_contents[i];
+            if (s3.key_contents[i].uid === k2.uid) kk2 = s3.key_contents[i];
+          }
+          must(kk2.linked_video_id === null, 'K2가 영상을 가리키면 안 됩니다');
+          must(kk1.linked_video_id === v1.id, 'K1은 여전히 V1을 가리켜야 합니다');
+          mustEq(JSON.stringify(S.load()), before, '저장된 자료가 바뀌었습니다');
+
+          // 다시 연결(relink)은 따로 있고, 기획 항목 쪽만 옮겨 붙습니다.
+          var v2 = S.makeVideo({ display_no: 2, title: 'V2', role: 'KEY' });
+          s3.videos.push(v2);
+          S.relinkKeyContent(s3, k1.uid, v2.id, { changed_by: '직트', reason: '영상 교체' });
+          var a = null, b = null;
+          for (i = 0; i < s3.videos.length; i++) {
+            if (s3.videos[i].id === v1.id) a = s3.videos[i];
+            if (s3.videos[i].id === v2.id) b = s3.videos[i];
+          }
+          for (i = 0; i < s3.key_contents.length; i++) if (s3.key_contents[i].uid === k1.uid) kk1 = s3.key_contents[i];
+          must(kk1.linked_video_id === v2.id, '다시 연결 뒤 K1이 V2를 가리켜야 합니다');
+          must(!('key_content_uid' in a) && !('key_content_uid' in b),
+               'KEY 영상 쪽에는 아무것도 쓰지 않아야 합니다');
+          var relink = 0;
+          for (i = 0; i < s3.link_log.length; i++) if (s3.link_log[i].action === 'relink') relink++;
+          must(relink === 1, '다시 연결 기록이 link_log 에 없습니다');
+          S.save(s3);
+          return '실패 사유: ' + msg + ' / relinkKeyContent 는 기획 항목 쪽만 옮겨 붙임';
+        });
+      });
+
+      // 20. 없는 번호·KEY가 아닌 영상으로 연결하면 실패하고 아무것도 안 바뀐다
+      test(20, '없는 번호·KEY가 아닌 영상으로 연결하면 실패하고 아무것도 안 바뀐다', function () {
+        return withFresh({}, function () {
+          var s2 = S.load();
+          var k1 = S.makeKeyContent({ display_no: 1, name: 'K1' });
+          s2.key_contents.push(k1);
+          var pull = S.makeVideo({ display_no: 1, title: '풀링 영상', role: 'PULL' });
+          s2.videos.push(pull);
+          S.save(s2);
+          var before = JSON.stringify(S.load());
+          var s3 = S.load();
+          var cases = [
+            { name: '없는 기획 항목', run: function () { S.linkKeyContent(s3, '없는-uid', pull.id); } },
+            { name: '없는 영상',     run: function () { S.linkKeyContent(s3, k1.uid, '없는-영상'); } },
+            { name: 'KEY가 아닌 영상', run: function () { S.linkKeyContent(s3, k1.uid, pull.id); } },
+            { name: '없는 기획 항목 겨냥', run: function () { S.setPullTarget(s3, pull.id, '없는-uid'); } },
+            { name: '없는 영상에 겨냥', run: function () { S.setPullTarget(s3, '없는-영상', k1.uid); } }
+          ];
+          var msgs = [];
+          for (var i = 0; i < cases.length; i++) {
+            var threw = false;
+            try { cases[i].run(); } catch (e) { threw = true; msgs.push(cases[i].name + ' → ' + e.message); }
+            must(threw, cases[i].name + ' 인데 실패하지 않았습니다');
+          }
+          var kk = null, vv = null, j;
+          for (j = 0; j < s3.key_contents.length; j++) if (s3.key_contents[j].uid === k1.uid) kk = s3.key_contents[j];
+          for (j = 0; j < s3.videos.length; j++) if (s3.videos[j].id === pull.id) vv = s3.videos[j];
+          must(kk.linked_video_id === null, '기획 항목이 바뀌었습니다');
+          must(vv.key_content_uid === null, '풀링 영상의 겨냥이 바뀌었습니다');
+          must(s3.link_log.length === 0, '실패했는데 연결 기록이 남았습니다');
+          mustEq(JSON.stringify(S.load()), before, '저장된 자료가 바뀌었습니다');
+          return msgs.join(' / ');
+        });
+      });
+
+      // 21. 같은 짝으로 여러 번 연결해도 결과가 같다
+      test(21, '같은 짝으로 여러 번 연결해도 결과가 같다', function () {
+        return withFresh({}, function () {
+          var s2 = S.load();
+          var k1 = S.makeKeyContent({ display_no: 1, name: 'K1' });
+          s2.key_contents.push(k1);
+          var v1 = S.makeVideo({ display_no: 1, title: 'V1', role: 'KEY' });
+          var pull = S.makeVideo({ display_no: 2, title: '풀링', role: 'PULL' });
+          s2.videos.push(v1, pull);
+          var r1 = S.linkKeyContent(s2, k1.uid, v1.id);
+          var snap = JSON.stringify(s2);
+          var r2 = S.linkKeyContent(s2, k1.uid, v1.id);
+          var r3 = S.linkKeyContent(s2, k1.uid, v1.id);
+          must(r1.changed === true, '첫 연결은 바뀌어야 합니다');
+          must(r2.changed === false && r2.already === true, '두 번째는 아무것도 안 바꿔야 합니다');
+          must(r3.changed === false, '세 번째도 아무것도 안 바꿔야 합니다');
+          mustEq(JSON.stringify(s2), snap, '여러 번 불렀더니 자료가 달라졌습니다');
+          var links = 0;
+          for (var i = 0; i < s2.link_log.length; i++) if (s2.link_log[i].action === 'link') links++;
+          must(links === 1, '연결 기록이 여러 줄 생겼습니다: ' + links);
+
+          // 겨냥도 같은 값을 여러 번 넣으면 한 번만 기록됩니다.
+          var p1 = S.setPullTarget(s2, pull.id, k1.uid);
+          var p2 = S.setPullTarget(s2, pull.id, k1.uid);
+          must(p1.changed === true && p2.changed === false, '같은 겨냥을 두 번 기록했습니다');
+
+          // 연결 해제는 기획 항목 쪽만 비웁니다. 겨냥은 따로 지웁니다.
+          S.unlinkKeyContent(s2, k1.uid, { changed_by: '직트', reason: '기획 취소' });
+          must(s2.key_contents[0].linked_video_id === null, '해제 뒤 기획 항목이 안 비었습니다');
+          S.clearPullTarget(s2, pull.id, { changed_by: '직트', reason: '겨냥 취소' });
+          must(s2.videos[1].key_content_uid === null, '겨냥이 안 지워졌습니다');
+          S.save(s2);
+          return '연결 1번만 기록 / 겨냥 1번만 기록 / 해제·겨냥 취소는 각각 자기 쪽만 비움';
+        });
+      });
+
+      // 22. 칸 순서만 바꾼 같은 자료는 다시 이관되지 않는다
+      test(22, '칸 순서만 바꾼 같은 자료는 다시 이관되지 않는다', function () {
+        var seed = fakeSeeds();
+        var one = { jikt_gyeol_v1: seed.jikt_gyeol_v1 };
+        return withFresh(one, function (m) {
+          var r1 = S.migrate();
+          must(r1.totals.migrated === 1, '첫 이관에서 한 열쇠가 옮겨져야 합니다');
+          var after1 = S.load();
+          var mig1 = 0, i;
+          for (i = 0; i < after1.migration_log.length; i++) {
+            if (after1.migration_log[i].status === 'migrated') mig1++;
+          }
+
+          var reordered = reorderKeys(seed.jikt_gyeol_v1);
+          must(reordered !== seed.jikt_gyeol_v1, '순서를 바꾼 글자가 원래와 같으면 시험이 안 됩니다');
+          m.setItem('jikt_gyeol_v1', reordered);
+
+          var r2 = S.migrate();
+          must(r2.keys.jikt_gyeol_v1.status === 'skipped_same',
+               '칸 순서만 바뀌었는데 다시 옮겼습니다: ' + r2.keys.jikt_gyeol_v1.status);
+          var after2 = S.load();
+          var mig2 = 0;
+          for (i = 0; i < after2.migration_log.length; i++) {
+            if (after2.migration_log[i].status === 'migrated') mig2++;
+          }
+          must(mig1 === mig2, '이관 기록이 늘었습니다: ' + mig1 + ' → ' + mig2);
+          must(after2.channel.problems.length === after1.channel.problems.length,
+               '문제 줄이 늘었습니다');
+          return '이관 기록 ' + mig1 + '줄 유지 / 상태 ' + r2.keys.jikt_gyeol_v1.status +
+                 ' / 문제 ' + after2.channel.problems.length + '줄';
+        });
+      });
+
+      // 23. 옛 저장칸이 일부만 있어도 나머지가 멀쩡히 이관된다
+      test(23, '옛 저장칸이 셋만 있어도 그 셋이 멀쩡히 이관된다', function () {
+        var seed = fakeSeeds();
+        var three = { jikt_gyeol_v1: seed.jikt_gyeol_v1,
+                      jikt_money_v1: seed.jikt_money_v1,
+                      jikt_title_v1: seed.jikt_title_v1 };
+        return withFresh(three, function (m) {
+          var r = S.migrate();
+          must(r.totals.migrated === 3, '셋이 옮겨져야 합니다. 실제 ' + r.totals.migrated);
+          must(r.totals.skipped_missing === 2, '없는 둘은 건너뛰어야 합니다. 실제 ' + r.totals.skipped_missing);
+          must(r.keys.jikt_key_v1.status === 'skipped_missing', 'jikt_key_v1 상태가 틀립니다');
+          must(r.keys.jikt_pull_v2.status === 'skipped_missing', 'jikt_pull_v2 상태가 틀립니다');
+          var st2 = S.load();
+          must(st2.channel.problems.length === 3, '결 정의 세 줄이 안 옮겨졌습니다');
+          must(st2.channel.monetization.target_revenue === 30000000, '수익화 값이 안 옮겨졌습니다');
+          must(st2.videos.length === 1 && st2.videos[0].title_work, '제목 디벨롭이 안 옮겨졌습니다');
+          must(st2.channel.purchase_stages.length === 0, '없는 저장칸의 값이 생겼습니다');
+          must(legacyWrites(m).length === 0, '옛 이름표에 쓰기가 있었습니다');
+          return '있는 셋 이관 / 없는 둘 건너뜀 / 문제 3줄 · 목표매출 30000000 · 영상 1개';
+        });
+      });
+
+      // 24. 옛 저장칸 하나가 깨져 있어도 나머지 넷이 이관된다
+      test(24, '옛 저장칸 하나가 깨져 있어도 나머지 넷이 이관된다', function () {
+        var seed = fakeSeeds();
+        seed.jikt_key_v1 = '{ "five": [ 깨진 글자';
+        return withFresh(seed, function (m) {
+          var r = S.migrate();
+          must(r.totals.migrated === 4, '넷이 옮겨져야 합니다. 실제 ' + r.totals.migrated);
+          must(r.totals.skipped_broken === 1, '깨진 하나는 건너뛰어야 합니다. 실제 ' + r.totals.skipped_broken);
+          must(r.keys.jikt_key_v1.status === 'skipped_broken', '깨진 열쇠 상태가 틀립니다');
+          var st2 = S.load();
+          must(st2.channel.problems.length === 3, '결 정의가 안 옮겨졌습니다');
+          must(st2.channel.key_checklist === null, '깨진 저장칸에서 값이 생겼습니다');
+          must(st2.videos.length === 1, '풀링·제목 영상이 안 만들어졌습니다');
+          must(st2.videos[0].reference_videos.length === 4, '참고 영상이 안 옮겨졌습니다');
+          must(legacyWrites(m).length === 0, '옛 이름표에 쓰기가 있었습니다');
+          var broken = false;
+          for (var i = 0; i < st2.migration_log.length; i++) {
+            if (st2.migration_log[i].source_key === 'jikt_key_v1' &&
+                st2.migration_log[i].reason === 'broken') broken = true;
+          }
+          must(broken, '깨진 사정이 이관 기록에 안 남았습니다');
+          return '넷 이관 · 하나(jikt_key_v1) 깨짐으로 건너뜀, 사정도 기록됨';
+        });
+      });
+
+      // 25. 이관 도중 일부러 오류를 내도 새 저장칸과 옛 이름표가 안 망가진다
+      test(25, '이관 도중 일부러 오류를 내도 새 저장칸과 옛 이름표가 안 망가진다', function () {
+        var seed = fakeSeeds();
+        var seedCopy = {};
+        for (var sk in seed) if (seed.hasOwnProperty(sk)) seedCopy[sk] = seed[sk];
+        return withFresh(seed, function (m) {
+          var orig = S._HANDLERS.jikt_money_v1;
+          var r;
+          S._HANDLERS.jikt_money_v1 = function (store) {
+            // 일부러 저장 뭉치를 먼저 더럽힌 뒤 터뜨립니다.
+            store.channel.raw.jikt_money_v1 = { 더럽힘: true };
+            store.channel.monetization = { target_revenue: 111 };
+            throw new Error('일부러 낸 오류');
+          };
+          try { r = S.migrate(); }
+          finally { S._HANDLERS.jikt_money_v1 = orig; }
+
+          must(r.totals.migrated === 4, '나머지 넷은 옮겨져야 합니다. 실제 ' + r.totals.migrated);
+          must(r.totals.skipped_error === 1, '오류 난 하나는 건너뛰어야 합니다. 실제 ' + r.totals.skipped_error);
+          must(r.keys.jikt_money_v1.status === 'skipped_error', '오류 열쇠 상태가 틀립니다');
+
+          var st2 = S.load();
+          // 오류 난 저장칸의 변경은 하나도 남으면 안 됩니다.
+          must(st2.channel.monetization === null,
+               '오류 난 저장칸의 중간 변경이 저장에 남았습니다: ' + JSON.stringify(st2.channel.monetization));
+          must(st2.channel.raw.jikt_money_v1 === undefined,
+               '오류 난 저장칸의 raw 가 남았습니다');
+          // 나머지는 멀쩡해야 합니다.
+          must(st2.channel.problems.length === 3, '앞서 옮긴 결 정의가 사라졌습니다');
+          must(st2.key_contents.length === 2, '앞서 옮긴 키 콘텐츠가 사라졌습니다');
+          must(st2.videos.length === 1 && st2.videos[0].reference_videos.length === 4,
+               '뒤에 옮긴 풀링 자료가 사라졌습니다');
+          // 옛 이름표는 글자 하나까지 그대로여야 합니다.
+          must(legacyWrites(m).length === 0, '옛 이름표에 쓰기가 있었습니다');
+          for (var kk in seedCopy) {
+            if (!seedCopy.hasOwnProperty(kk)) continue;
+            must(m.getItem(kk) === seedCopy[kk], kk + ' 의 원문이 바뀌었습니다');
+          }
+          // 사정이 기록에 남아야 합니다.
+          var noted = false, errRow = false, i;
+          for (i = 0; i < st2.migration_log.length; i++) {
+            var lg = st2.migration_log[i];
+            if (lg.source_key === 'jikt_money_v1' && lg.reason === 'error') errRow = true;
+            if (lg.kind === 'migrate_error') noted = true;
+          }
+          must(errRow, '오류로 건너뛴 기록이 없습니다');
+          must(noted, '오류 사유가 이관 기록에 없습니다');
+          var chk = S.checkRowIds(st2);
+          must(chk.ok, '오류 뒤 저장에 고유 번호 문제가 생겼습니다: ' + JSON.stringify(chk));
+          return '넷 이관 · 하나 오류로 건너뜀 / 오류 난 저장칸 변경 0 / 옛 이름표 쓰기 0번';
+        });
+      });
+
+      // 26. role·format이 저장되고 허용값이 아니면 거부된다
+      test(26, 'role·format이 저장되고 허용값이 아니면 거부된다', function () {
+        return withFresh({}, function () {
+          var s2 = S.load();
+          var v = S.makeVideo({ display_no: 1, title: '역할 시험', role: 'PULL', format: 'SHORT' });
+          must(v.role === 'PULL', 'role 이 안 들어갔습니다');
+          must(v.format === 'SHORT', 'format 이 안 들어갔습니다');
+          must(v.created_role === 'PULL', 'created_role 이 안 박혔습니다');
+          s2.videos.push(v);
+          var v2 = S.makeVideo({ display_no: 2, title: '형식 모름', role: 'KEY' });
+          must(v2.format === 'UNKNOWN', '형식을 안 주면 UNKNOWN 이라야 합니다');
+          s2.videos.push(v2);
+          S.save(s2);
+          var re = S.load();
+          must(re.videos[0].role === 'PULL' && re.videos[0].format === 'SHORT',
+               '저장하고 다시 읽으니 역할·형식이 사라졌습니다');
+          must(re.videos[1].role === 'KEY' && re.videos[1].format === 'UNKNOWN',
+               '두 번째 영상의 역할·형식이 틀립니다');
+
+          var bads = [
+            { name: 'role 없음',      opt: { title: 'x' } },
+            { name: 'role 이상한 값', opt: { title: 'x', role: '키' } },
+            { name: 'role 빈 글자',   opt: { title: 'x', role: '' } },
+            { name: 'format 이상한 값', opt: { title: 'x', role: 'PULL', format: '롱폼' } }
+          ];
+          var msgs = [];
+          for (var i = 0; i < bads.length; i++) {
+            var threw = false;
+            try { S.makeVideo(bads[i].opt); } catch (e) { threw = true; msgs.push(bads[i].name); }
+            must(threw, bads[i].name + ' 인데 거부하지 않았습니다');
+          }
+          // 이관으로 만든 영상은 PULL · UNKNOWN 이어야 합니다.
+          return '저장 확인 / 거부 확인: ' + msgs.join(', ');
+        });
+      });
+
+      // 27. 저장 전체에 고유 번호가 없는 줄과 중복 번호가 하나도 없다
+      test(27, '저장 전체에 고유 번호가 없는 줄과 중복 번호가 하나도 없다', function () {
+        var re = S.load();
+        var chk = S.checkRowIds(re);
+        must(chk.missing.length === 0, '고유 번호가 없는 줄이 있습니다: ' + chk.missing.join(' / '));
+        must(chk.duplicates.length === 0, '번호가 겹치는 줄이 있습니다: ' + chk.duplicates.join(' / '));
+        must(chk.unknown_lists.length === 0,
+             '이름표에 없는 목록이 있습니다: ' + chk.unknown_lists.join(' / '));
+        // 이관으로 만든 목록들도 확인합니다.
+        must(re.channel.purchase_stages.length === 5, '구매 5단계가 다섯 줄이라야 합니다');
+        for (var i = 0; i < re.channel.purchase_stages.length; i++) {
+          must(!!re.channel.purchase_stages[i].stage_id, '구매 단계 줄에 stage_id 가 없습니다');
+        }
+        for (i = 0; i < re.channel.weekly_todos.length; i++) {
+          must(!!re.channel.weekly_todos[i].todo_id, '할 일 줄에 todo_id 가 없습니다');
+        }
+        var listCount = 0;
+        for (var nm in S.LIST_ID_FIELDS) if (S.LIST_ID_FIELDS.hasOwnProperty(nm)) listCount++;
+        return '없는 줄 0 · 겹치는 번호 0 · 이름표에 없는 목록 0 (이름표에 등록된 목록 ' + listCount + '가지)';
+      });
+
+      // 28. 근거 줄의 필수값이 비면 거부된다
+      test(28, '근거 줄의 필수값이 비면 거부된다', function () {
+        var good = S.makeSourceRef({ source_type: '강의원문', title: '35주차 강의 원본',
+                                     locator: '12쪽 3째 줄', verified_at: '2026-09-04T00:00:00.000Z' });
+        must(!!good.source_ref_id, 'source_ref_id 가 없습니다');
+        must(good.locator === '12쪽 3째 줄', 'locator 가 안 들어갔습니다');
+        var bads = [
+          { name: '종류 없음',   opt: { title: 'a', locator: 'b', verified_at: 'c' } },
+          { name: 'title 빈 글자', opt: { source_type: 'PPT', title: '   ', locator: 'b', verified_at: 'c' } },
+          { name: 'title 없음',  opt: { source_type: 'PPT', locator: 'b', verified_at: 'c' } },
+          { name: 'locator 빈 글자', opt: { source_type: 'PPT', title: 'a', locator: '', verified_at: 'c' } },
+          { name: 'verified_at 없음', opt: { source_type: 'PPT', title: 'a', locator: 'b' } }
+        ];
+        var msgs = [];
+        for (var i = 0; i < bads.length; i++) {
+          var threw = false;
+          try { S.makeSourceRef(bads[i].opt); } catch (e) { threw = true; msgs.push(bads[i].name); }
+          must(threw, bads[i].name + ' 인데 거부하지 않았습니다');
+        }
+        // url_or_path·note 는 선택입니다.
+        var ok2 = S.makeSourceRef({ source_type: '노션', title: '자료서랍', locator: '색인 카드 3',
+                                    verified_at: '2026-09-04T00:00:00.000Z' });
+        must(ok2.url_or_path === '' && ok2.note === '', '선택 칸은 비어도 됩니다');
+        return '거부 확인: ' + msgs.join(', ') + ' / 선택 칸(url_or_path·note)은 비어도 통과';
+      });
+
+      // 29. 저장칸이 깨져 있으면 「고쳐야 하는 상태」가 되고 저장·이관이 막힌다
+      test(29, '저장칸이 깨져 있으면 고쳐야 하는 상태가 되고 저장·이관이 막힌다', function () {
+        var seed = fakeSeeds();
+        seed.jikt_store_v1 = '{ "videos": [ 여기서부터 깨짐';
+        return withFresh(seed, function (m) {
+          var h = S.health();
+          must(h.status === 'corrupt', '깨진 저장칸인데 고쳐야 하는 상태가 아닙니다: ' + h.status);
+          must(!!h.corrupt_backup_key, '깨진 원문을 옮겨 둔 자리가 없습니다');
+          must(m.getItem(h.corrupt_backup_key) === seed.jikt_store_v1,
+               '깨진 원문이 그대로 옮겨지지 않았습니다');
+          must(m.getItem('jikt_store_v1') === seed.jikt_store_v1,
+               '깨진 원문을 지우거나 고쳤습니다(그대로 둬야 합니다)');
+
+          var blocked = [];
+          try { S.load(); } catch (e) { blocked.push('읽기'); }
+          try { S.save(S.emptyStore()); } catch (e) { blocked.push('저장'); }
+          try { S.migrate(); } catch (e) { blocked.push('이관'); }
+          mustEq(blocked, ['읽기', '저장', '이관'], '막혀야 할 것이 안 막혔습니다');
+          must(m.getItem('jikt_store_v1') === seed.jikt_store_v1,
+               '막힌 뒤에도 깨진 원문이 바뀌면 안 됩니다');
+          must(legacyWrites(m).length === 0, '옛 이름표에 쓰기가 있었습니다');
+
+          // 사람이 "새로 시작"을 명시적으로 골라야만 풀립니다.
+          var needConfirm = false;
+          try { S.startFresh(); } catch (e) { needConfirm = true; }
+          must(needConfirm, '확인 없이도 새로 시작이 됐습니다');
+          S.startFresh({ confirm: true });
+          must(S.health().status === 'ok', '새로 시작한 뒤에도 상태가 안 풀립니다');
+          var r = S.migrate();
+          must(r.totals.migrated === 5, '새로 시작한 뒤 이관이 돌아야 합니다. 실제 ' + r.totals.migrated);
+          return '상태 corrupt / 깨진 원문은 ' + h.corrupt_backup_key +
+                 ' 로 옮겨 보관 / 읽기·저장·이관 모두 막힘 / 새로 시작 뒤 이관 5개 정상';
+        });
+      });
+
+      // ══ 반례 시험 12개 — 여기부터 자동으로 붙여 넣습니다 (고치지 마십시오) ══
+      var CT = test;   // 반례 시험 파일은 CT(번호, 이름, 함수) 로 씁니다
+
+      /* 파일: 반례시험/c01_옛2판파일_사람확인.js */
+      /* 반례 1 — 옛 코드가 만든 「2판」 파일을 자동 변환하지 않고 사람 확인을 요구하며 거부한다. */
+      CT(30, '옛 2판 파일은 자동 변환하지 않고 사람 확인을 요구하며 거부한다', function () {
+        return withFresh({}, function (m) {
+          // 지금 저장칸에는 정상 자료가 들어 있습니다.
+          var base = S.load();
+          base.videos.push(S.makeVideo({ display_no: 1, role: 'KEY', title: '지켜야 할 영상' }));
+          S.save(base);
+          var beforeText = m.getItem('jikt_store_v1');
+
+          // 옛 코드가 만든 2판 파일 — role·format 칸이 아예 없습니다.
+          var old2 = {
+            schema_version: 2,
+            created_at: '2026-09-01T00:00:00.000Z',
+            updated_at: '2026-09-01T00:00:00.000Z',
+            channel: { core_problem: '옛 한 문장', problems: [], purchase_stages: [],
+                       weekly_todos: [], subscribers: [], youtube_revenue: [],
+                       legacy_saved_at: {}, raw: {}, migrated_video_id: null },
+            videos: [{ id: '11111111-1111-4111-a111-111111111111', display_no: 1,
+                       title: '옛 코드가 만든 영상', notes: [], measurements: [],
+                       post_metrics: [], reference_videos: [], title_candidates: [],
+                       gate_results: [], raw: {} }],
+            key_contents: [], rules: [], orphan_title_candidates: [], legacy_rows: [],
+            migration_log: [], link_log: [], counters: {}
+          };
+
+          var r = S.importJson(JSON.stringify(old2));
+          must(r.ok === false, '2판 파일을 그대로 받아들였습니다 — 거부해야 합니다');
+          must(!!r.reason, '거부 사유가 없습니다');
+          must(String(r.reason).indexOf('2판') !== -1, '사유에 「2판」이 안 적혔습니다: ' + r.reason);
+          must(String(r.reason).indexOf('사람') !== -1,
+               '사유에 「사람이 확인해야 합니다」가 안 적혔습니다: ' + r.reason);
+          must(r.needs_human === true, '사람 확인이 필요하다는 표시(needs_human)가 없습니다');
+          must(m.getItem('jikt_store_v1') === beforeText, '저장칸이 덮어써졌습니다');
+
+          // 자동 변환도 하면 안 됩니다 — 짐작한 role·format 이 생기면 안 됩니다.
+          var now = S.load();
+          must(now.videos.length === 1 && now.videos[0].title === '지켜야 할 영상',
+               '2판 파일의 영상이 슬쩍 들어왔습니다');
+          must(S.SCHEMA_VERSION === 3, '이번 구조는 3판이라야 합니다. 실제 ' + S.SCHEMA_VERSION);
+          return '거부 사유: ' + r.reason;
+        });
+      });
+
+      /* 파일: 반례시험/c02_판번호다르면_읽기도거부.js */
+      /* 반례 2 — 저장칸의 판번호가 다르면 load() 도 거부하고 「고쳐야 하는 상태」로 간다. */
+      CT(31, '저장칸의 판번호가 다르면 load()도 거부하고 고쳐야 하는 상태가 된다', function () {
+        var msgs = [];
+        var vers = [999, 2, 1];
+        for (var i = 0; i < vers.length; i++) {
+          (function (ver) {
+            withFresh({}, function (m) {
+              var text = JSON.stringify({ schema_version: ver, videos: [], key_contents: [],
+                                          rules: [], orphan_title_candidates: [], legacy_rows: [],
+                                          migration_log: [], link_log: [], counters: {},
+                                          channel: {} });
+              m.setItem('jikt_store_v1', text);
+
+              var threw = false, msg = '';
+              try { S.load(); } catch (e) { threw = true; msg = e.message; }
+              must(threw, ver + '판 저장칸을 load()가 그냥 읽었습니다 — 거부해야 합니다');
+              msgs.push(ver + '판 → ' + msg);
+
+              var h = S.health();
+              must(h.ok === false, ver + '판인데 상태가 정상으로 나옵니다: ' + h.status);
+              must(h.status === 'needs_repair',
+                   ver + '판이면 「고쳐야 하는 상태」라야 합니다. 실제 ' + h.status);
+
+              // 저장도 막혀야 하고 원문은 그대로여야 합니다.
+              var blocked = false;
+              try { S.save(S.emptyStore()); } catch (e2) { blocked = true; }
+              must(blocked, ver + '판인데 저장이 안 막혔습니다');
+              must(m.getItem('jikt_store_v1') === text, ver + '판 원문이 바뀌었습니다');
+            });
+          })(vers[i]);
+        }
+        return msgs.join(' / ');
+      });
+
+      /* 파일: 반례시험/c03_풀링_기획항목_KEY영상_분리연결.js */
+      /* 반례 3 — 풀링 → 기획 항목 → KEY 영상. KEY 영상에는 key_content_uid 가 생기지 않는다. */
+      CT(32, '풀링 → 기획 항목 → KEY 영상의 한 방향 한 갈래 연결', function () {
+        return withFresh({}, function () {
+          var s = S.load();
+
+          // 1) 기획 항목이 먼저 생깁니다. 영상은 아직 없습니다.
+          var kc = S.makeKeyContent({ display_no: 1, name: '재테크 중 이게 제일 쉬워요' });
+          s.key_contents.push(kc);
+
+          // 2) 풀링 영상이 그 기획 항목을 겨냥합니다.
+          var pull = S.makeVideo({ display_no: 1, role: 'PULL', format: 'SHORT', title: '풀링 영상' });
+          s.videos.push(pull);
+          S.setPullTarget(s, pull.id, kc.uid, { changed_by: '직트', reason: '겨냥 정함' });
+          must(pull.key_content_uid === kc.uid, '풀링 영상의 겨냥이 안 들어갔습니다');
+          must(kc.linked_video_id === null, 'KEY 영상이 아직 없는데 linked_video_id 가 채워졌습니다');
+          S.save(s);
+
+          // 3) 뒤늦게 KEY 영상이 생깁니다. 만들 때 key_content_uid 를 주면 거부해야 합니다.
+          var refused = false;
+          try { S.makeVideo({ display_no: 2, role: 'KEY', title: 'x', key_content_uid: kc.uid }); }
+          catch (e) { refused = true; }
+          must(refused, 'KEY 영상에 key_content_uid 를 붙였는데 거부하지 않았습니다');
+
+          var s2 = S.load();
+          var keyVid = S.makeVideo({ display_no: 2, role: 'KEY', format: 'LONG', title: 'KEY 영상' });
+          must(!('key_content_uid' in keyVid), 'KEY 영상에 key_content_uid 칸 자체를 두면 안 됩니다');
+          s2.videos.push(keyVid);
+          S.linkKeyContent(s2, kc.uid, keyVid.id, { changed_by: '직트', reason: '영상 생김' });
+
+          var kk = null, vv = null, pv = null, i;
+          for (i = 0; i < s2.key_contents.length; i++) if (s2.key_contents[i].uid === kc.uid) kk = s2.key_contents[i];
+          for (i = 0; i < s2.videos.length; i++) {
+            if (s2.videos[i].id === keyVid.id) vv = s2.videos[i];
+            if (s2.videos[i].id === pull.id) pv = s2.videos[i];
+          }
+          must(kk.linked_video_id === keyVid.id, '기획 항목이 KEY 영상을 가리켜야 합니다');
+          must(!('key_content_uid' in vv), 'KEY 영상에 풀링용 포인터가 또 생겼습니다');
+          must(pv.key_content_uid === kc.uid, '풀링 영상의 겨냥이 사라졌습니다');
+          S.save(s2);
+
+          // 4) 겨냥은 풀링 영상에만 허용됩니다.
+          var s3 = S.load();
+          var badTarget = false;
+          try { S.setPullTarget(s3, keyVid.id, kc.uid); } catch (e2) { badTarget = true; }
+          must(badTarget, 'KEY 영상에 겨냥을 붙였는데 거부하지 않았습니다');
+          var noKc = false;
+          try { S.setPullTarget(s3, pull.id, '없는-uid'); } catch (e3) { noKc = true; }
+          must(noKc, '없는 기획 항목을 겨냥했는데 거부하지 않았습니다');
+
+          // 5) 겨냥 지우기
+          S.clearPullTarget(s3, pull.id, { changed_by: '직트', reason: '겨냥 취소' });
+          var pv2 = null;
+          for (i = 0; i < s3.videos.length; i++) if (s3.videos[i].id === pull.id) pv2 = s3.videos[i];
+          must(pv2.key_content_uid === null, '겨냥이 안 지워졌습니다');
+          S.save(s3);
+          return '풀링 겨냥 → 기획 항목 → KEY 영상. KEY 영상에는 key_content_uid 없음';
+        });
+      });
+
+      /* 파일: 반례시험/c04_부분이관_새자료보존.js */
+      /* 반례 4 — 기존 새 자료가 있는 상태에서 옛 저장칸 하나만 이관해도 새 줄이 안 사라진다. (다섯 개 각각) */
+      CT(33, '기존 새 자료가 있는 상태에서 일부 이관 — 새 줄이 안 사라진다(옛 저장칸 다섯 개 각각)', function () {
+        var seed = fakeSeeds();
+        var lines = [];
+
+        // ① jikt_gyeol_v1 — 손으로 넣은 문제 한 줄이 살아남아야 합니다.
+        withFresh({ jikt_gyeol_v1: seed.jikt_gyeol_v1 }, function () {
+          var s = S.load();
+          s.channel.problems.push({ problem_id: S.newId(), display_no: 99,
+                                    text: '손으로 넣은 문제', value_category: '시간',
+                                    frequency: 1, importance: 1 });
+          S.setChannelValue(s, 'core_problem', '사람이 고친 한 문장', { changed_by: '직트' });
+          S.save(s);
+          var r = S.migrate();
+          var a = S.load();
+          var found = false, i;
+          for (i = 0; i < a.channel.problems.length; i++) {
+            if (a.channel.problems[i].text === '손으로 넣은 문제') found = true;
+          }
+          must(found, '① jikt_gyeol_v1 이관이 손으로 넣은 문제 줄을 지웠습니다');
+          must(a.channel.problems.length === 4, '① 문제 줄은 손 1 + 옛 3 = 4줄이라야 합니다. 실제 ' + a.channel.problems.length);
+          must(a.channel.core_problem === '사람이 고친 한 문장',
+               '① 사람이 고친 한 문장을 조용히 덮어썼습니다: ' + a.channel.core_problem);
+          must(r.conflicts && r.conflicts.length >= 1, '① 충돌을 보고하지 않았습니다');
+          lines.push('① 문제 4줄 · 한 문장 지켜짐 · 충돌 ' + r.conflicts.length + '건');
+        });
+
+        // ② jikt_key_v1 — 손으로 넣은 구매 단계 줄과 기획 항목이 살아남아야 합니다.
+        withFresh({ jikt_key_v1: seed.jikt_key_v1 }, function () {
+          var s = S.load();
+          s.channel.purchase_stages.push({ stage_id: S.newId(), stage_index: 9,
+                                           stage_name: '손으로 넣은 단계', general: 'a', mine: 'b' });
+          s.key_contents.push(S.makeKeyContent({ display_no: 99, name: '손으로 넣은 기획 항목' }));
+          S.save(s);
+          S.migrate();
+          var a = S.load(), i, st = false, kc = false;
+          for (i = 0; i < a.channel.purchase_stages.length; i++) {
+            if (a.channel.purchase_stages[i].stage_name === '손으로 넣은 단계') st = true;
+          }
+          for (i = 0; i < a.key_contents.length; i++) {
+            if (a.key_contents[i].name === '손으로 넣은 기획 항목') kc = true;
+          }
+          must(st, '② jikt_key_v1 이관이 손으로 넣은 구매 단계 줄을 지웠습니다');
+          must(kc, '② jikt_key_v1 이관이 손으로 넣은 기획 항목을 지웠습니다');
+          must(a.channel.purchase_stages.length === 6, '② 구매 단계는 손 1 + 옛 5 = 6줄이라야 합니다. 실제 ' + a.channel.purchase_stages.length);
+          lines.push('② 구매단계 6줄 · 기획 항목 ' + a.key_contents.length + '개');
+        });
+
+        // ③ jikt_money_v1 — 손으로 넣은 할 일과 사람이 고친 목표 매출이 지켜져야 합니다.
+        withFresh({ jikt_money_v1: seed.jikt_money_v1 }, function () {
+          var s = S.load();
+          s.channel.weekly_todos.push({ todo_id: S.newId(), key: '손t9', done: true });
+          S.setChannelValue(s, 'monetization.target_revenue', 777, { changed_by: '직트' });
+          S.save(s);
+          var r = S.migrate();
+          var a = S.load(), i, todo = false;
+          for (i = 0; i < a.channel.weekly_todos.length; i++) {
+            if (a.channel.weekly_todos[i].key === '손t9') todo = true;
+          }
+          must(todo, '③ jikt_money_v1 이관이 손으로 넣은 할 일 줄을 지웠습니다');
+          must(a.channel.weekly_todos.length === 6, '③ 할 일은 손 1 + 옛 5 = 6줄이라야 합니다. 실제 ' + a.channel.weekly_todos.length);
+          must(a.channel.monetization.target_revenue === 777,
+               '③ 사람이 고친 목표 매출을 조용히 덮어썼습니다: ' + a.channel.monetization.target_revenue);
+          must(r.conflicts && r.conflicts.length >= 1, '③ 충돌을 보고하지 않았습니다');
+          must(a.channel.monetization.aov === 1500000, '③ 사람이 안 고친 객단가는 옮겨져야 합니다');
+          lines.push('③ 할 일 6줄 · 목표 매출 777 지켜짐 · 충돌 ' + r.conflicts.length + '건');
+        });
+
+        // ④ jikt_pull_v2 — 사람이 고친 영상 값과 손으로 넣은 참고 영상이 지켜져야 합니다.
+        withFresh({ jikt_pull_v2: seed.jikt_pull_v2 }, function () {
+          var s = S.load();
+          var v = S.makeVideo({ display_no: 1, role: 'PULL', title: '옛 화면에서 옮겨 온 영상' });
+          s.videos.push(v);
+          s.channel.migrated_video_id = v.id;
+          v.reference_videos.push(S.makeReferenceVideo({ display_no: 99, title: '손으로 넣은 참고 영상' }));
+          S.setVideoValue(s, v.id, 'content_kind', '사람이 고친 갈래', { changed_by: '직트' });
+          S.save(s);
+          var r = S.migrate();
+          var a = S.load(), i, vv = null, hand = false;
+          for (i = 0; i < a.videos.length; i++) if (a.videos[i].id === v.id) vv = a.videos[i];
+          must(vv, '④ 이관이 기존 영상 상자를 못 찾았습니다');
+          for (i = 0; i < vv.reference_videos.length; i++) {
+            if (vv.reference_videos[i].title === '손으로 넣은 참고 영상') hand = true;
+          }
+          must(hand, '④ jikt_pull_v2 이관이 손으로 넣은 참고 영상을 지웠습니다');
+          must(vv.reference_videos.length === 5, '④ 참고 영상은 손 1 + 옛 4 = 5줄이라야 합니다. 실제 ' + vv.reference_videos.length);
+          must(vv.content_kind === '사람이 고친 갈래',
+               '④ 사람이 고친 갈래를 조용히 덮어썼습니다: ' + vv.content_kind);
+          must(r.conflicts && r.conflicts.length >= 1, '④ 충돌을 보고하지 않았습니다');
+          lines.push('④ 참고 영상 5줄 · 갈래 지켜짐 · 충돌 ' + r.conflicts.length + '건');
+        });
+
+        // ⑤ jikt_title_v1 — 사람이 고친 제목 작업판이 지켜져야 합니다.
+        withFresh({ jikt_title_v1: seed.jikt_title_v1 }, function () {
+          var s = S.load();
+          var v = S.makeVideo({ display_no: 1, role: 'PULL', title: '옛 화면에서 옮겨 온 영상' });
+          s.videos.push(v);
+          s.channel.migrated_video_id = v.id;
+          v.notes.push({ note_id: S.newId(), text: '손으로 넣은 메모' });
+          S.setVideoValue(s, v.id, 'title_work', { original_title: '사람이 고친 제목' }, { changed_by: '직트' });
+          S.save(s);
+          var r = S.migrate();
+          var a = S.load(), i, vv = null, note = false;
+          for (i = 0; i < a.videos.length; i++) if (a.videos[i].id === v.id) vv = a.videos[i];
+          for (i = 0; i < vv.notes.length; i++) if (vv.notes[i].text === '손으로 넣은 메모') note = true;
+          must(note, '⑤ jikt_title_v1 이관이 손으로 넣은 메모를 지웠습니다');
+          must(vv.title_work && vv.title_work.original_title === '사람이 고친 제목',
+               '⑤ 사람이 고친 제목 작업판을 조용히 덮어썼습니다');
+          must(r.conflicts && r.conflicts.length >= 1, '⑤ 충돌을 보고하지 않았습니다');
+          lines.push('⑤ 메모 지켜짐 · 제목 작업판 지켜짐 · 충돌 ' + r.conflicts.length + '건');
+        });
+
+        return lines.join(' / ');
+      });
+
+      /* 파일: 반례시험/c05_고유번호빠지면_저장가져오기거부.js */
+      /* 반례 5 — event_id·measurement_id 가 빠진 자료는 저장도 가져오기도 거부한다. */
+      CT(34, 'event_id·measurement_id가 빠진 자료의 저장·가져오기 거부', function () {
+        return withFresh({}, function (m) {
+          var base = S.load();
+          var v = S.makeVideo({ display_no: 1, role: 'PULL', title: '번호 시험' });
+          base.videos.push(v);
+          S.save(base);
+          var beforeText = m.getItem('jikt_store_v1');
+
+          // ① event_id 가 없는 사건 줄 → 저장 거부
+          var s1 = S.load();
+          s1.videos[0].gate_results.push({ gate_id: 'G1', pass: true });   // event_id 없음
+          var threw1 = false, msg1 = '';
+          try { S.save(s1); } catch (e) { threw1 = true; msg1 = e.message; }
+          must(threw1, 'event_id 가 없는 줄인데 저장이 됐습니다');
+          must(m.getItem('jikt_store_v1') === beforeText, '거부했는데 저장칸이 바뀌었습니다');
+
+          // ② measurement_id 가 없는 측정 줄 → 저장 거부
+          var s2 = S.load();
+          s2.videos[0].measurements.push({ metric_key: 'x', value: 1, date_status: 'unknown' });
+          var threw2 = false, msg2 = '';
+          try { S.save(s2); } catch (e) { threw2 = true; msg2 = e.message; }
+          must(threw2, 'measurement_id 가 없는 줄인데 저장이 됐습니다');
+          must(m.getItem('jikt_store_v1') === beforeText, '거부했는데 저장칸이 바뀌었습니다');
+
+          // ③ 번호가 겹치는 줄 → 저장 거부
+          var s3 = S.load();
+          var dup = S.newId();
+          s3.videos[0].gate_results.push({ event_id: dup, gate_id: 'G1' });
+          s3.videos[0].gate_results.push({ event_id: dup, gate_id: 'G2' });
+          var threw3 = false;
+          try { S.save(s3); } catch (e) { threw3 = true; }
+          must(threw3, '번호가 겹치는데 저장이 됐습니다');
+
+          // ④ 가져오기도 같은 검사를 거쳐야 합니다.
+          var good = JSON.parse(S.exportJson(S.load()));
+          good.videos[0].gate_results.push({ gate_id: 'G9', pass: false });   // event_id 없음
+          var r = S.importJson(JSON.stringify(good));
+          must(r.ok === false, 'event_id 가 없는 파일을 가져왔습니다');
+          must(m.getItem('jikt_store_v1') === beforeText, '가져오기 거부인데 저장칸이 바뀌었습니다');
+
+          var good2 = JSON.parse(S.exportJson(S.load()));
+          good2.videos[0].measurements.push({ metric_key: 'y', value: 2, date_status: 'unknown' });
+          var r2 = S.importJson(JSON.stringify(good2));
+          must(r2.ok === false, 'measurement_id 가 없는 파일을 가져왔습니다');
+          must(m.getItem('jikt_store_v1') === beforeText, '가져오기 거부인데 저장칸이 바뀌었습니다');
+
+          return '저장 거부: ' + msg1 + ' / ' + msg2 + ' / 가져오기도 두 가지 모두 거부';
+        });
+      });
+
+      /* 파일: 반례시험/c06_v5_1사건목록_일곱개.js */
+      /* 반례 6 — v5.1 의 사건 목록 일곱 개가 전부 이름표에 있고 검사된다. */
+      CT(35, 'v5.1의 사건 목록 일곱 개가 전부 이름표에 있고 검사된다', function () {
+        var need = ['market_verdict_log', 'reference_picked_log', 'title_final_log',
+                    'title_rejected', 'stage_log', 'bypass_log', 'change_log'];
+        var i;
+        for (i = 0; i < need.length; i++) {
+          must(S.LIST_ID_FIELDS[need[i]] === 'event_id',
+               need[i] + ' 가 이름표(LIST_ID_FIELDS)에 event_id 로 없습니다');
+        }
+        // 명세 이름은 title_length_judgement 입니다.
+        must(S.LIST_ID_FIELDS.title_length_judgement === 'event_id',
+             'title_length_judgement 가 이름표에 없습니다(코드 이름 length_judgments 를 명세 이름으로 맞추십시오)');
+        must(S.LIST_ID_FIELDS.length_judgments === undefined,
+             '명세에 없는 이름 length_judgments 가 아직 남아 있습니다');
+
+        return withFresh({}, function () {
+          var s = S.load();
+          var v = S.makeVideo({ display_no: 1, role: 'PULL', title: '사건 목록 시험' });
+          for (i = 0; i < need.length; i++) {
+            must(Object.prototype.toString.call(v[need[i]]) === '[object Array]',
+                 'makeVideo 의 기본 뼈대에 ' + need[i] + ' 가 없습니다');
+          }
+          must(Object.prototype.toString.call(v.title_length_judgement) === '[object Array]',
+               'makeVideo 의 기본 뼈대에 title_length_judgement 가 없습니다');
+          must(v.length_judgments === undefined, '옛 이름 length_judgments 가 아직 남아 있습니다');
+
+          s.videos.push(v);
+          // 정상 event_id 를 붙여 넣으면 「이름표에 없는 목록」이 나오면 안 됩니다.
+          for (i = 0; i < need.length; i++) {
+            v[need[i]].push({ event_id: S.newId(), 메모: need[i] + ' 한 줄' });
+          }
+          v.title_length_judgement.push(S.makeLengthJudgment({
+            applied_case_id: 'LONGFORM_DEFAULT', limit: 35, length: 30 }));
+          var chk = S.checkRowIds(s);
+          must(chk.unknown_lists.length === 0,
+               '이름표에 없는 목록이 있습니다: ' + chk.unknown_lists.join(' / '));
+          must(chk.missing.length === 0, '빠진 번호가 있습니다: ' + chk.missing.join(' / '));
+          S.save(s);
+
+          // 번호를 하나 빼면 반드시 걸려야 합니다.
+          var s2 = S.load();
+          var vv = s2.videos[0];
+          vv.bypass_log.push({ 메모: '번호 없음' });
+          var vr = S.validateStore(s2);
+          must(vr.ok === false, 'bypass_log 의 번호 없는 줄을 못 잡았습니다');
+          return '일곱 목록 + title_length_judgement 모두 이름표에 있고 검사됨';
+        });
+      });
+
+      /* 파일: 반례시험/c07_정상판정뒤_다른탭에서깨짐.js */
+      /* 반례 7 — 정상 판정 뒤 다른 탭에서 저장칸이 깨지면 저장이 막혀야 한다. */
+      CT(36, '정상 판정 뒤 다른 탭에서 깨진 경우 — 저장이 막힌다', function () {
+        return withFresh({}, function (m) {
+          var s = S.load();
+          s.videos.push(S.makeVideo({ display_no: 1, role: 'KEY', title: '지켜야 할 영상' }));
+          S.save(s);
+
+          // ① 이 시점에는 정상입니다. 여기서 한 번 물어봅니다(기억이 남습니다).
+          must(S.health().ok === true, '정상이라야 합니다');
+
+          // ② 다른 탭이 저장칸을 깨뜨립니다.
+          var broken = '{ "videos": [ 다른 탭이 깨뜨림';
+          m.setItem('jikt_store_v1', broken);
+
+          // ③ 이제 저장하면 막혀야 합니다. 기억만 믿고 깨진 원문을 덮어쓰면 안 됩니다.
+          must(S.health().ok === false, '밖에서 깨졌는데 여전히 정상이라고 합니다');
+          var threw = false, msg = '';
+          try { S.save(s); } catch (e) { threw = true; msg = e.message; }
+          must(threw, '깨진 뒤에도 저장이 됐습니다');
+          must(m.getItem('jikt_store_v1') === broken, '깨진 원문을 덮어썼습니다');
+
+          // 읽기·이관도 막혀야 합니다.
+          var b2 = false; try { S.load(); } catch (e2) { b2 = true; }
+          var b3 = false; try { S.migrate(); } catch (e3) { b3 = true; }
+          must(b2, '깨진 뒤 읽기가 안 막혔습니다');
+          must(b3, '깨진 뒤 이관이 안 막혔습니다');
+          must(m.getItem('jikt_store_v1') === broken, '막힌 뒤에도 원문이 바뀌었습니다');
+
+          S.startFresh({ confirm: true });
+          return '저장 막힘 사유: ' + msg;
+        });
+      });
+
+      /* 파일: 반례시험/c08_known인데_측정시각없음.js */
+      /* 반례 8 — date_status 가 known 인데 measured_at 이 없으면 판정에 쓰지 않는다. */
+      CT(37, 'known인데 measured_at이 없으면 판정에 안 쓰인다', function () {
+        // ① 이름표만 known 이고 시각이 없는 줄 — 판정 불가여야 합니다.
+        var noTime = { measurement_id: S.newId(), metric_key: 'x', value: 1,
+                       date_status: 'known', measured_at: null };
+        must(S.isJudgeable(noTime) === false, 'measured_at 이 없는데 판정에 쓰인다고 합니다');
+        var blankTime = { measurement_id: S.newId(), metric_key: 'x', value: 1,
+                          date_status: 'known', measured_at: '   ' };
+        must(S.isJudgeable(blankTime) === false, '공백만 있는 measured_at 이 판정에 쓰입니다');
+        var badTime = { measurement_id: S.newId(), metric_key: 'x', value: 1,
+                        date_status: 'known', measured_at: 'c' };
+        must(S.isJudgeable(badTime) === false, '날짜 모양이 아닌 measured_at 이 판정에 쓰입니다');
+
+        var okOne = S.makeMeasurement({ metric_key: 'x', value: 1, date_status: 'known',
+                                        measured_at: '2026-09-01T00:00:00.000Z' });
+        must(S.isJudgeable(okOne) === true, '제대로 된 known 줄이 판정에 안 쓰입니다');
+
+        // ② 만들 때도 거부해야 합니다.
+        var threw = false, msg = '';
+        try { S.makeMeasurement({ metric_key: 'x', value: 1, date_status: 'known' }); }
+        catch (e) { threw = true; msg = e.message; }
+        must(threw, 'known 인데 measured_at 없이 만들어졌습니다');
+
+        // ③ bounded 는 앞뒤 순서를 검사해야 합니다.
+        var rev = false, rmsg = '';
+        try {
+          S.makeMeasurement({ metric_key: 'x', value: 1, date_status: 'bounded',
+                              measured_after: '2026-09-01T00:00:00.000Z',
+                              measured_before: '2026-06-01T00:00:00.000Z' });
+        } catch (e2) { rev = true; rmsg = e2.message; }
+        must(rev, 'bounded 의 앞뒤 시각이 거꾸로인데 받아들였습니다');
+
+        // ④ 저장할 때도 다시 봐야 합니다.
+        return withFresh({}, function (m) {
+          var s = S.load();
+          var v = S.makeVideo({ display_no: 1, role: 'PULL', title: '측정 시험' });
+          s.videos.push(v);
+          S.save(s);
+          var before = m.getItem('jikt_store_v1');
+          var s2 = S.load();
+          s2.videos[0].measurements.push({ measurement_id: S.newId(), metric_key: 'x', value: 1,
+                                           date_status: 'known', measured_at: null });
+          var blocked = false;
+          try { S.save(s2); } catch (e3) { blocked = true; }
+          must(blocked, '저장할 때 known + 시각 없음을 못 잡았습니다');
+          must(m.getItem('jikt_store_v1') === before, '거부했는데 저장칸이 바뀌었습니다');
+          return '만들 때 거부: ' + msg + ' / 앞뒤 거꾸로 거부: ' + rmsg + ' / 저장 때도 거부';
+        });
+      });
+
+      /* 파일: 반례시험/c09_사유와작업자_공백거부.js */
+      /* 반례 9 — 규칙·무효 기록의 사유와 작업자가 공백이면 거부한다. verified_at 은 날짜 모양이라야 한다. */
+      CT(38, '규칙·무효 기록의 사유와 작업자가 공백이면 거부한다', function () {
+        return withFresh({}, function (m) {
+          var s = S.load();
+          var msgs = [];
+
+          // ① setRule — changed_by · change_reason 이 공백이면 거부
+          var bads = [
+            { name: 'changed_by 없음',   opt: { rule_id: 'R1', value: 1, change_reason: '이유' } },
+            { name: 'changed_by 공백',   opt: { rule_id: 'R1', value: 1, changed_by: '   ', change_reason: '이유' } },
+            { name: 'change_reason 없음', opt: { rule_id: 'R1', value: 1, changed_by: '직트' } },
+            { name: 'change_reason 공백', opt: { rule_id: 'R1', value: 1, changed_by: '직트', change_reason: '  ' } }
+          ];
+          for (var i = 0; i < bads.length; i++) {
+            var threw = false;
+            try { S.setRule(s, bads[i].opt); } catch (e) { threw = true; msgs.push(bads[i].name); }
+            must(threw, bads[i].name + ' 인데 거부하지 않았습니다');
+          }
+          S.setRule(s, { rule_id: 'R1', value: 1, changed_by: '직트', change_reason: '처음 정함' });
+          must(S.getRuleHistory(s, 'R1').length === 1, '제대로 된 규칙 한 줄만 남아야 합니다');
+
+          // ② voidEvent — void_reason · voided_by 가 공백이면 거부
+          var v = S.makeVideo({ display_no: 1, role: 'PULL', title: '무효 시험' });
+          s.videos.push(v);
+          var g = S.pushRow(v.gate_results, { gate_id: 'G1', pass: true, void: false });
+          var vbads = [
+            { name: '무효자 없음', opt: { void_reason: '이유' } },
+            { name: '무효자 공백', opt: { void_reason: '이유', voided_by: '  ' } },
+            { name: '무효 이유 없음', opt: { voided_by: '직트' } },
+            { name: '무효 이유 공백', opt: { voided_by: '직트', void_reason: '\t ' } }
+          ];
+          for (i = 0; i < vbads.length; i++) {
+            var t2 = false;
+            try { S.voidEvent(g, vbads[i].opt); } catch (e2) { t2 = true; msgs.push(vbads[i].name); }
+            must(t2, vbads[i].name + ' 인데 거부하지 않았습니다');
+            must(g.void === false, vbads[i].name + ' 에서 줄이 이미 무효로 바뀌었습니다');
+          }
+          S.voidEvent(g, { void_reason: '숫자를 잘못 넣었습니다', voided_by: '직트' });
+          must(g.void === true, '제대로 된 무효 처리가 안 됩니다');
+
+          // ③ verified_at 은 날짜 모양이라야 합니다 ('c' 같은 글자는 안 됩니다)
+          var t3 = false;
+          try {
+            S.makeSourceRef({ source_type: 'PPT', title: 'a', locator: 'b', verified_at: 'c' });
+          } catch (e3) { t3 = true; msgs.push('verified_at 이 날짜가 아님'); }
+          must(t3, "verified_at 에 'c' 를 받아들였습니다");
+
+          S.save(s);
+
+          // ④ 저장할 때도 다시 봐야 합니다.
+          var before = m.getItem('jikt_store_v1');
+          var s2 = S.load();
+          s2.rules[0].history.push({ event_id: S.newId(), rule_id: 'R1', version: 2, value: 2,
+                                     changed_by: '  ', change_reason: '  ', void: false });
+          var blocked = false;
+          try { S.save(s2); } catch (e4) { blocked = true; }
+          must(blocked, '저장할 때 공백 작업자·사유를 못 잡았습니다');
+          must(m.getItem('jikt_store_v1') === before, '거부했는데 저장칸이 바뀌었습니다');
+
+          return '거부 확인: ' + msgs.join(', ');
+        });
+      });
+
+      /* 파일: 반례시험/c10_다섯전부실패면_무변경.js */
+      /* 반례 10 — 이관 담당자 다섯이 전부 실패하면 저장칸이 하나도 안 바뀐다. */
+      CT(39, '이관 담당자 다섯이 전부 실패하면 저장칸 무변경', function () {
+        var seed = fakeSeeds();
+        return withFresh(seed, function (m) {
+          var s = S.load();
+          s.videos.push(S.makeVideo({ display_no: 1, role: 'KEY', title: '지켜야 할 영상' }));
+          S.save(s);
+          var before = m.getItem('jikt_store_v1');
+          var beforeStore = S.exportJson(S.load());
+
+          var orig = {}, kk;
+          for (kk in S._HANDLERS) if (S._HANDLERS.hasOwnProperty(kk)) orig[kk] = S._HANDLERS[kk];
+          var r;
+          try {
+            for (kk in S._HANDLERS) {
+              if (!S._HANDLERS.hasOwnProperty(kk)) continue;
+              S._HANDLERS[kk] = function () { throw new Error('일부러 낸 오류'); };
+            }
+            r = S.migrate();
+          } finally {
+            for (kk in orig) if (orig.hasOwnProperty(kk)) S._HANDLERS[kk] = orig[kk];
+          }
+
+          must(r.totals.migrated === 0, '하나도 옮겨지면 안 됩니다. 실제 ' + r.totals.migrated);
+          must(r.totals.skipped_error === 5, '다섯 개 모두 오류라야 합니다. 실제 ' + r.totals.skipped_error);
+          must(r.saved === false, '전부 실패인데 저장했다고 합니다');
+          must(m.getItem('jikt_store_v1') === before,
+               '전부 실패인데 저장칸이 바뀌었습니다');
+          must(S.exportJson(S.load()) === beforeStore, '전부 실패인데 자료가 달라졌습니다');
+
+          // 이관 기록도 저장칸에 남으면 안 됩니다.
+          var a = S.load();
+          must(a.migration_log.length === 0,
+               '전부 실패인데 이관 기록 ' + a.migration_log.length + '줄이 저장됐습니다');
+          // 오류 내용은 돌려주는 보고서에만 있어야 합니다.
+          must(r.errors && r.errors.length === 5, '보고서에 오류 다섯 건이 없습니다');
+          return '옮김 0 · 오류 5 · 저장 안 함 · 이관 기록 0줄 (오류는 보고서에만 ' + r.errors.length + '건)';
+        });
+      });
+
+      /* 파일: 반례시험/c11_숫자아닌_발견단계거부.js */
+      /* 반례 11 — 숫자가 아닌 found_steps 를 거부한다. */
+      CT(40, '숫자가 아닌 found_steps 거부', function () {
+        var ref = S.makeReferenceVideo({ display_no: 1, title: '참고', found_steps: [5] });
+        var bads = ['아무 단계', '', null, undefined, {}, [], NaN, Infinity, 1.5, '3.7', true];
+        var msgs = [];
+        for (var i = 0; i < bads.length; i++) {
+          var threw = false;
+          try { S.addFoundStep(ref, bads[i]); } catch (e) { threw = true; }
+          must(threw, JSON.stringify(bads[i] === undefined ? '(없음)' : bads[i]) +
+                      ' 를 발견 단계로 받아들였습니다');
+        }
+        msgs.push('나쁜 값 ' + bads.length + '가지 모두 거부');
+        must(JSON.stringify(ref.found_steps) === '[5]',
+             '거부했는데 목록이 바뀌었습니다: ' + JSON.stringify(ref.found_steps));
+
+        // 글자로 온 정수는 숫자로 받아들입니다.
+        S.addFoundStep(ref, '6');
+        S.addFoundStep(ref, 6);
+        must(JSON.stringify(ref.found_steps) === '[5,6]',
+             '정수는 받아들이고 두 번 넣지 않아야 합니다: ' + JSON.stringify(ref.found_steps));
+
+        // makeReferenceVideo 로 받은 found_steps 전체도 같은 검사를 거쳐야 합니다.
+        var t2 = false, m2 = '';
+        try { S.makeReferenceVideo({ display_no: 2, title: 'x', found_steps: [1, '아무 단계'] }); }
+        catch (e2) { t2 = true; m2 = e2.message; }
+        must(t2, 'makeReferenceVideo 가 숫자가 아닌 발견 단계를 받아들였습니다');
+        var t3 = false;
+        try { S.makeReferenceVideo({ display_no: 2, title: 'x', found_steps: [2.5] }); }
+        catch (e3) { t3 = true; }
+        must(t3, 'makeReferenceVideo 가 정수가 아닌 발견 단계를 받아들였습니다');
+
+        return msgs.join(' / ') + ' / makeReferenceVideo 도 거부: ' + m2;
+      });
+
+      /* 파일: 반례시험/c12_표시번호_다섯목록_무결성.js */
+      /* 반례 12 — 표시 번호(display_no)를 저장하는 다섯 목록 전부가 무결성 검사를 받는다.
+       * videos · key_contents · channel.problems · reference_videos · title_candidates
+       * (앞의 셋은 번호를 붙여 저장하면서도 검사를 안 받고 있었습니다.) */
+      CT(49, '표시 번호 — 다섯 목록 전부 겹침·잘못된 값 거부', function () {
+        return withFresh({}, function (m) {
+          // 다섯 목록이 모두 채워진 "정상" 저장 뭉치를 만드는 틀
+          function build() {
+            var s = S.load();
+            var v1 = S.makeVideo({ display_no: 1, role: 'PULL', title: '영상1' });
+            v1.reference_videos = [
+              S.makeReferenceVideo({ display_no: 1, title: '참고1' }),
+              S.makeReferenceVideo({ display_no: 2, title: '참고2' })
+            ];
+            v1.title_candidates = [
+              S.makeTitleCandidate({ display_no: 1, text: '제목1' }),
+              S.makeTitleCandidate({ display_no: 2, text: '제목2' })
+            ];
+            var v2 = S.makeVideo({ display_no: 2, role: 'PULL', title: '영상2' });
+            s.videos = [v1, v2];
+            s.key_contents = [
+              S.makeKeyContent({ display_no: 1, name: '기획1' }),
+              S.makeKeyContent({ display_no: 2, name: '기획2' })
+            ];
+            s.channel.problems = [
+              { problem_id: S.newId(), display_no: 1, text: '문제1' },
+              { problem_id: S.newId(), display_no: 2, text: '문제2' }
+            ];
+            return s;
+          }
+
+          // 다섯 목록 — 이름과 "오류 글에 나와야 하는 자리 이름"
+          var LISTS = [
+            { name: 'videos',            where: 'videos',
+              get: function (s) { return s.videos; } },
+            { name: 'key_contents',      where: 'key_contents',
+              get: function (s) { return s.key_contents; } },
+            { name: 'channel.problems',  where: 'channel.problems',
+              get: function (s) { return s.channel.problems; } },
+            { name: 'reference_videos',  where: 'videos[0].reference_videos',
+              get: function (s) { return s.videos[0].reference_videos; } },
+            { name: 'title_candidates',  where: 'videos[0].title_candidates',
+              get: function (s) { return s.videos[0].title_candidates; } }
+          ];
+
+          // ① 다섯 목록 전부 번호가 안 겹치면 저장된다
+          S.save(build());
+          var goodText = m.getItem('jikt_store_v1');
+          must(goodText && goodText.length > 0, '정상 상자가 저장되지 않았습니다');
+
+          function mustReject(makeBad, label, mustHave) {
+            var s = build();
+            makeBad(s);
+            var threw = false, msg = '';
+            try { S.save(s); } catch (e) { threw = true; msg = (e && e.message) || String(e); }
+            must(threw, label + ' — 거부돼야 하는데 저장됐습니다');
+            must(m.getItem('jikt_store_v1') === goodText,
+                 label + ' — 거부했는데 저장칸이 바뀌었습니다');
+            for (var q = 0; q < mustHave.length; q++) {
+              must(msg.indexOf(mustHave[q]) !== -1,
+                   label + ' — 오류 글에 "' + mustHave[q] + '" 가 없습니다: ' + msg);
+            }
+            return msg;
+          }
+
+          // ② 다섯 목록 각각 — 번호가 겹치면 거부. 오류 글에 목록 이름과 줄 번호가 나와야 합니다.
+          var dupMsgs = [];
+          LISTS.forEach(function (L) {
+            var msg = mustReject(function (s) { L.get(s)[1].display_no = 1; },
+                                 L.name + ' 번호 겹침',
+                                 [L.where + '[1]', '겹칩니다']);
+            dupMsgs.push(L.name);
+            must(msg.indexOf(L.where + '[0]') !== -1,
+                 L.name + ' — 겹친 상대 줄(' + L.where + '[0]) 이 오류 글에 없습니다: ' + msg);
+          });
+
+          // ③ 다섯 목록 각각 — 잘못된 값 여섯 가지를 전부 거부
+          var BADS = [
+            { name: '0',        put: function (r) { r.display_no = 0; } },
+            { name: '음수(-1)', put: function (r) { r.display_no = -1; } },
+            { name: '소수(1.5)', put: function (r) { r.display_no = 1.5; } },
+            { name: 'NaN',      put: function (r) { r.display_no = NaN; } },
+            { name: '글자("1")', put: function (r) { r.display_no = '1'; } },
+            { name: '없음',      put: function (r) { delete r.display_no; } }
+          ];
+          var badCount = 0;
+          LISTS.forEach(function (L) {
+            BADS.forEach(function (B) {
+              mustReject(function (s) { B.put(L.get(s)[1]); },
+                         L.name + ' 의 ' + B.name,
+                         [L.where + '[1]', '양의 정수가 아닙니다']);
+              badCount++;
+            });
+          });
+
+          // ④ 거부가 이어진 뒤에도 정상 상자는 여전히 저장된다
+          S.save(build());
+          must(m.getItem('jikt_store_v1') !== null, '마지막 정상 저장이 실패했습니다');
+
+          return '다섯 목록(' + dupMsgs.join('·') + ') 번호 겹침 거부 / ' +
+                 '잘못된 값 ' + badCount + '가지 거부 / 오류 글에 목록 이름과 줄 번호 표시 / 정상은 통과';
+        });
+      });
+
+      // ══ 반례 시험 12개 — 여기까지 ══
+
+
+      // ══ 3차 보정 시험 여덟 가지 (41~48) — 여기부터 ══
+
+      // 41. 판번호는 3인데 안쪽 고유 번호가 빠진 저장칸은 load() 가 거부한다
+      test(41, '같은 3판이지만 안쪽 고유 번호가 빠진 저장칸을 load()가 거부한다', function () {
+        return withFresh({}, function (m) {
+          var s = S.load();
+          var v = S.makeVideo({ display_no: 1, role: 'PULL', title: '관문 시험' });
+          v.gate_results.push({ event_id: S.newId(), gate_id: 'G1', pass: true });
+          s.videos.push(v);
+          S.save(s);
+
+          // 판번호는 3 그대로 두고 안쪽 event_id 만 지웁니다.
+          var obj = JSON.parse(m.getItem('jikt_store_v1'));
+          delete obj.videos[0].gate_results[0].event_id;
+          var brokenText = JSON.stringify(obj);
+          m.setItem('jikt_store_v1', brokenText);
+          must(obj.schema_version === 3, '판번호는 3 그대로여야 합니다');
+
+          var h = S.health();
+          must(h.ok === false, '안쪽이 망가졌는데 정상이라고 합니다: ' + h.status);
+          must(h.status === 'needs_repair',
+               '「고쳐야 하는 상태」라야 합니다. 실제 ' + h.status);
+          var threw = false, msg = '';
+          try { S.load(); } catch (e) { threw = true; msg = e.message; }
+          must(threw, 'load() 가 그냥 읽었습니다');
+          must(m.getItem('jikt_store_v1') === brokenText, '원문을 건드렸습니다');
+          var blocked = false;
+          try { S.save(S.emptyStore()); } catch (e2) { blocked = true; }
+          must(blocked, '저장이 안 막혔습니다');
+          must(m.getItem('jikt_store_v1') === brokenText, '막힌 뒤에도 원문이 바뀌었습니다');
+          return '판번호 3 그대로 · 상태 ' + h.status + ' · load() 거부: ' + msg;
+        });
+      });
+
+      // 42. save(null)·save(undefined)·save([])·save('글자') 는 실패하고 원문이 그대로다
+      test(42, 'save에 잘못된 것을 주면 실패하고 원문이 바이트 단위로 그대로다', function () {
+        return withFresh({}, function (m) {
+          var s = S.load();
+          s.videos.push(S.makeVideo({ display_no: 1, role: 'PULL', title: '지켜야 할 영상' }));
+          S.save(s);
+          var before = m.getItem('jikt_store_v1');
+
+          var bads = [null, undefined, [], '글자', 123, true];
+          var names = ['null', 'undefined', '빈 목록', '글자', '숫자', '참거짓'];
+          var msgs = [];
+          for (var i = 0; i < bads.length; i++) {
+            var threw = false, msg = '';
+            try { S.save(bads[i]); } catch (e) { threw = true; msg = e.message; }
+            must(threw, names[i] + ' 을(를) save() 가 받아들였습니다');
+            must(m.getItem('jikt_store_v1') === before,
+                 names[i] + ' 뒤 원문이 바뀌었습니다');
+            msgs.push(names[i]);
+          }
+          var after = S.load();
+          must(after.videos.length === 1,
+               '영상이 사라졌습니다 — 남은 수 ' + after.videos.length);
+
+          // 가져오기도 같은 검사를 거칩니다.
+          var r1 = S.importJson('null');
+          must(r1.ok === false, 'importJson 이 null 을 받아들였습니다');
+          var r2 = S.importJson('[]');
+          must(r2.ok === false, 'importJson 이 빈 목록을 받아들였습니다');
+          must(m.getItem('jikt_store_v1') === before, '가져오기 거부인데 원문이 바뀌었습니다');
+          return '거부: ' + msgs.join(', ') + ' / 영상 1개 그대로 / importJson 도 거부';
+        });
+      });
+
+      // 43. 새로 시작 전에 원문 백업. 백업이 실패하면 새로 시작도 멈춘다
+      test(43, '새로 시작 전에 원문을 백업하고, 백업이 실패하면 새로 시작도 멈춘다', function () {
+        var lines = [];
+        function backupKeysOf(m) {
+          var ks = m._keys(), out = [];
+          for (var i = 0; i < ks.length; i++) {
+            if (ks[i].indexOf(S.BACKUP_PREFIX) === 0) out.push(ks[i]);
+          }
+          return out;
+        }
+
+        // ① 2판 원문 — 새로 시작 전에 반드시 백업돼야 합니다
+        withFresh({}, function (m) {
+          var old2 = JSON.stringify({ schema_version: 2,
+                                      videos: [{ id: 'v2-1', title: '2판에만 있는 영상' }] });
+          m.setItem('jikt_store_v1', old2);
+          var r = S.startFresh({ confirm: true });
+          var keys = backupKeysOf(m);
+          must(keys.length === 1, '2판 원문을 백업하지 않았습니다. 백업 ' + keys.length + '개');
+          must(r && r.backup_key === keys[0], '돌려준 값에 backup_key 가 없습니다');
+          var snap = JSON.parse(m.getItem(keys[0]));
+          must(snap.keys.jikt_store_v1 === old2, '백업 안에 2판 원문이 그대로 없습니다');
+          lines.push('① 2판 → 백업됨');
+        });
+
+        // ② 깨진 자료
+        withFresh({}, function (m) {
+          var broken = '{ "videos": [ 여기서부터 깨짐';
+          m.setItem('jikt_store_v1', broken);
+          var r = S.startFresh({ confirm: true });
+          var keys = backupKeysOf(m);
+          must(keys.length === 1, '깨진 원문을 백업하지 않았습니다');
+          var snap = JSON.parse(m.getItem(keys[0]));
+          must(snap.keys.jikt_store_v1 === broken, '백업 안에 깨진 원문이 그대로 없습니다');
+          must(!!r.backup_key, 'backup_key 가 없습니다');
+          lines.push('② 깨진 자료 → 백업됨');
+        });
+
+        // ③ 정상 3판
+        withFresh({}, function (m) {
+          var s = S.load();
+          s.videos.push(S.makeVideo({ display_no: 1, role: 'KEY', title: '정상 영상' }));
+          S.save(s);
+          var text = m.getItem('jikt_store_v1');
+          var r = S.startFresh({ confirm: true });
+          var keys = backupKeysOf(m);
+          must(keys.length === 1, '정상 3판 원문을 백업하지 않았습니다');
+          var snap = JSON.parse(m.getItem(keys[0]));
+          must(snap.keys.jikt_store_v1 === text, '백업 안에 원문이 그대로 없습니다');
+          must(!!r.backup_key, 'backup_key 가 없습니다');
+          var now = S.load();
+          must(now.videos.length === 0, '새로 시작인데 빈 상자가 아닙니다');
+          lines.push('③ 정상 3판 → 백업됨');
+        });
+
+        // ④ 지문이 다르면 새로 시작을 멈춥니다 (지금 지우려는 게 내가 본 그것이 맞는가)
+        withFresh({}, function (m) {
+          var s = S.load();
+          s.videos.push(S.makeVideo({ display_no: 1, role: 'KEY', title: '지켜야 할 영상' }));
+          S.save(s);
+          var text = m.getItem('jikt_store_v1');
+          var threw = false, msg = '';
+          try { S.startFresh({ confirm: true, expected_hash: '엉뚱한지문' }); }
+          catch (e) { threw = true; msg = e.message; }
+          must(threw, '지문이 다른데 새로 시작이 됐습니다');
+          must(m.getItem('jikt_store_v1') === text, '멈췄는데 원문이 바뀌었습니다');
+          must(backupKeysOf(m).length === 0, '멈췄는데 백업이 생겼습니다');
+          // 맞는 지문이면 지나갑니다.
+          var r = S.startFresh({ confirm: true, expected_hash: S.hashText(text) });
+          must(!!r.backup_key, '맞는 지문인데 백업이 없습니다');
+          lines.push('④ 지문 다르면 멈춤 / 맞으면 진행');
+        });
+
+        // ⑤ 백업 저장이 실패하면 새로 시작도 멈춥니다
+        withFresh({}, function () {
+          var inner = makeMemoryStorage();
+          var guard = {
+            getItem: function (k) { return inner.getItem(k); },
+            setItem: function (k, v) {
+              if (String(k).indexOf(S.BACKUP_PREFIX) === 0) {
+                throw new Error('백업 저장칸이 꽉 찼습니다');
+              }
+              inner.setItem(k, v);
+            },
+            removeItem: function (k) { inner.removeItem(k); },
+            key: function (i) { return inner.key(i); },
+            get length() { return inner.length; }
+          };
+          var text = JSON.stringify({ schema_version: 3, videos: [] });
+          inner.setItem('jikt_store_v1', text);
+          S.useStorage(guard);
+          var threw = false, msg = '';
+          try { S.startFresh({ confirm: true }); } catch (e) { threw = true; msg = e.message; }
+          must(threw, '백업이 실패했는데 새로 시작이 됐습니다');
+          must(inner.getItem('jikt_store_v1') === text, '백업 실패인데 원문이 바뀌었습니다');
+          lines.push('⑤ 백업 실패 → 새로 시작 멈춤');
+        });
+
+        return lines.join(' / ');
+      });
+
+      // 44. 다른 탭이 저장한 뒤 낡은 사본을 저장하면 충돌로 거부한다
+      test(44, '다른 탭이 정상 저장한 뒤 낡은 사본을 저장하면 충돌로 거부한다', function () {
+        return withFresh({}, function (m) {
+          var seed = S.load();
+          seed.videos.push(S.makeVideo({ display_no: 1, role: 'PULL', title: '처음 영상' }));
+          S.save(seed);
+
+          var tabA = S.load();            // 탭 A 가 읽습니다
+          var tabB = S.load();            // 탭 B 도 읽습니다
+
+          tabB.videos.push(S.makeVideo({ display_no: 2, role: 'KEY', title: '탭 B가 넣은 영상' }));
+          S.save(tabB);                   // 탭 B 가 정상 저장
+          var afterB = m.getItem('jikt_store_v1');
+
+          tabA.videos[0].title = '탭 A가 고친 제목';
+          var threw = false, msg = '';
+          try { S.save(tabA); } catch (e) { threw = true; msg = e.message; }
+          must(threw, '낡은 사본을 저장했는데 막지 않았습니다');
+          must(m.getItem('jikt_store_v1') === afterB, '충돌인데 저장칸이 바뀌었습니다');
+
+          var now = S.load();
+          must(now.videos.length === 2,
+               '탭 B가 넣은 영상이 사라졌습니다 — 남은 수 ' + now.videos.length);
+
+          // 다시 읽어서 고치면 저장됩니다.
+          now.videos[0].title = '탭 A가 고친 제목';
+          S.save(now);
+          must(S.load().videos[0].title === '탭 A가 고친 제목', '다시 읽고 고친 저장이 막혔습니다');
+
+          // 이관도 시작할 때 지문과 저장 직전 지문을 견줍니다.
+          var mig = false, mmsg = '';
+          try {
+            var probe = S.load();
+            m.setItem('jikt_store_v1', JSON.stringify(
+              (function () { var o = JSON.parse(m.getItem('jikt_store_v1')); o.updated_at = '2026-01-01T00:00:00.000Z'; return o; })()));
+            S.save(probe);
+          } catch (e2) { mig = true; mmsg = e2.message; }
+          must(mig, '밖에서 바뀐 뒤의 저장이 안 막혔습니다');
+
+          // 사람이 일부러 통째로 복원하는 길(importJson)만 예외입니다. 백업을 먼저 만듭니다.
+          var text = S.exportJson(S.load());
+          var r = S.importJson(text);
+          must(r.ok === true, '통째 복원이 막혔습니다: ' + r.reason);
+          must(!!r.backup_key, '통째 복원인데 백업을 안 만들었습니다');
+          return '충돌 거부: ' + msg + ' / 다시 읽으면 저장됨 / 통째 복원은 백업 뒤 허용';
+        });
+      });
+
+      // 45. created_role — 누락·잘못된 값·나중에 바꾸기 전부 거부
+      test(45, 'created_role의 누락·잘못된 값·나중에 바꾸기를 모두 거부한다', function () {
+        return withFresh({}, function (m) {
+          var s = S.load();
+          s.videos.push(S.makeVideo({ display_no: 1, role: 'PULL', title: '역할 시험' }));
+          S.save(s);
+          var before = m.getItem('jikt_store_v1');
+
+          var s1 = S.load();
+          delete s1.videos[0].created_role;
+          var t1 = false, m1 = '';
+          try { S.save(s1); } catch (e) { t1 = true; m1 = e.message; }
+          must(t1, 'created_role 이 없는데 저장됐습니다');
+          must(m.getItem('jikt_store_v1') === before, '거부인데 저장칸이 바뀌었습니다');
+
+          var s2 = S.load();
+          s2.videos[0].created_role = 'NOPE';
+          var t2 = false;
+          try { S.save(s2); } catch (e) { t2 = true; }
+          must(t2, 'created_role 이 NOPE 인데 저장됐습니다');
+          must(m.getItem('jikt_store_v1') === before, '거부인데 저장칸이 바뀌었습니다');
+
+          var s3 = S.load();
+          s3.videos[0].created_role = 'KEY';        // 만들 때 역할은 바꿀 수 없습니다
+          var t3 = false, m3 = '';
+          try { S.save(s3); } catch (e) { t3 = true; m3 = e.message; }
+          must(t3, 'created_role 을 나중에 바꿨는데 저장됐습니다');
+          must(m.getItem('jikt_store_v1') === before, '거부인데 저장칸이 바뀌었습니다');
+
+          var bad = JSON.parse(S.exportJson(S.load()));
+          delete bad.videos[0].created_role;
+          var r = S.importJson(JSON.stringify(bad));
+          must(r.ok === false, 'created_role 이 없는 파일을 가져왔습니다');
+          must(m.getItem('jikt_store_v1') === before, '가져오기 거부인데 저장칸이 바뀌었습니다');
+          return '없음 거부: ' + m1 + ' / 잘못된 값 거부 / 바꾸기 거부: ' + m3;
+        });
+      });
+
+      // 46. 목록의 숫자·글자 줄, KEY의 null 포인터 칸, 겹치는 표시 번호
+      test(46, '목록의 숫자·글자 줄 / KEY의 null 겨냥 칸 / 겹치는 표시 번호를 모두 거부한다', function () {
+        return withFresh({}, function (m) {
+          var s = S.load();
+          s.videos.push(S.makeVideo({ display_no: 1, role: 'PULL', title: '줄 모양 시험' }));
+          S.save(s);
+          var before = m.getItem('jikt_store_v1');
+          var msgs = [];
+
+          function mustReject(name, change) {
+            var t = S.load();
+            change(t);
+            var threw = false;
+            try { S.save(t); } catch (e) { threw = true; }
+            must(threw, name + ' 인데 저장됐습니다');
+            must(m.getItem('jikt_store_v1') === before, name + ' 거부인데 저장칸이 바뀌었습니다');
+            msgs.push(name);
+          }
+
+          mustReject('관문 목록의 숫자 줄', function (t) { t.videos[0].gate_results.push(123); });
+          mustReject('관문 목록의 글자 줄', function (t) { t.videos[0].gate_results.push('글자'); });
+          mustReject('규칙 목록의 숫자 줄', function (t) { t.rules.push(123); });
+          mustReject('영상 목록의 글자 줄', function (t) { t.videos.push('글자'); });
+          mustReject('키 콘텐츠 목록의 숫자 줄', function (t) { t.key_contents.push(7); });
+          mustReject('KEY 영상의 값이 null 인 겨냥 칸', function (t) {
+            var k = S.makeVideo({ display_no: 2, role: 'KEY', title: 'KEY 영상' });
+            k.key_content_uid = null;          // 칸 자체를 두면 안 됩니다
+            t.videos.push(k);
+          });
+          mustReject('참고 영상의 표시 번호 겹침', function (t) {
+            t.videos[0].reference_videos.push(S.makeReferenceVideo({ display_no: 1, title: 'A' }));
+            t.videos[0].reference_videos.push(S.makeReferenceVideo({ display_no: 1, title: 'B' }));
+          });
+          mustReject('제목 후보의 표시 번호 겹침', function (t) {
+            t.videos[0].title_candidates.push(S.makeTitleCandidate({ display_no: 2, text: 'A' }));
+            t.videos[0].title_candidates.push(S.makeTitleCandidate({ display_no: 2, text: 'B' }));
+          });
+          mustReject('표시 번호가 양수가 아님', function (t) {
+            t.videos[0].title_candidates.push(S.makeTitleCandidate({ display_no: 0, text: 'A' }));
+          });
+
+          // 뿌리 칸이 빠진 파일은 가져오기도 거부합니다.
+          var r1 = S.importJson(JSON.stringify({ schema_version: 3, videos: [] }));
+          must(r1.ok === false, '뿌리 칸이 빠진 파일을 가져왔습니다');
+          var noCounter = JSON.parse(S.exportJson(S.load()));
+          delete noCounter.counters;
+          var r2 = S.importJson(JSON.stringify(noCounter));
+          must(r2.ok === false, 'counters 가 빠진 파일을 가져왔습니다');
+          must(m.getItem('jikt_store_v1') === before, '가져오기 거부인데 저장칸이 바뀌었습니다');
+          msgs.push('뿌리 칸 빠진 파일 거부', 'counters 빠진 파일 거부');
+          return msgs.join(' / ');
+        });
+      });
+
+      // 47. 날짜 검사
+      test(47, '날짜 — 달력에 없는 날·뒤에 붙은 글자·다른 구분자를 거부하고 bounded는 경계가 하나는 있어야 한다', function () {
+        function dateOk(x) {
+          try {
+            S.makeSourceRef({ source_type: 'PPT', title: 'a', locator: 'b', verified_at: x });
+            return true;
+          } catch (e) { return false; }
+        }
+        var bads = ['2026-02-30', '2026-09-04junk', '2026/09/04', '2026.09.04',
+                    '2026-13-01', '2026-09-4', '2026-02-29', '2026-04-31', '20260904'];
+        var i;
+        for (i = 0; i < bads.length; i++) {
+          must(dateOk(bads[i]) === false, bads[i] + ' 를 날짜로 받아들였습니다');
+        }
+        var goods = ['2026-09-04', '2024-02-29', '2026-09-04T00:00:00.000Z',
+                     '2026-12-31T23:59:59Z', '2026-09-04T09:30'];
+        for (i = 0; i < goods.length; i++) {
+          must(dateOk(goods[i]) === true, goods[i] + ' 를 날짜로 안 받아들였습니다');
+        }
+
+        // bounded — 앞뒤 경계가 둘 다 없으면 안 됩니다 (그러면 unknown 과 구분이 안 됩니다)
+        var t1 = false, m1 = '';
+        try { S.makeMeasurement({ metric_key: 'x', value: 1, date_status: 'bounded' }); }
+        catch (e) { t1 = true; m1 = e.message; }
+        must(t1, 'bounded 인데 앞뒤 경계가 둘 다 없는 줄을 받아들였습니다');
+
+        // 하나만 있어도 됩니다 (v5.1 — 둘 다 선택, 하나만 있어도 됩니다)
+        var a = S.makeMeasurement({ metric_key: 'x', value: 1, date_status: 'bounded',
+                                    measured_after: '2026-06-01' });
+        var b = S.makeMeasurement({ metric_key: 'x', value: 1, date_status: 'bounded',
+                                    measured_before: '2026-06-01' });
+        must(a.date_status === 'bounded' && b.date_status === 'bounded',
+             'bounded 에 경계가 하나만 있는 줄이 막혔습니다');
+
+        return withFresh({}, function (m) {
+          var s = S.load();
+          var v = S.makeVideo({ display_no: 1, role: 'PULL', title: '날짜 시험' });
+          s.videos.push(v);
+          S.save(s);
+          var before = m.getItem('jikt_store_v1');
+
+          var s2 = S.load();
+          s2.videos[0].measurements.push({ measurement_id: S.newId(), metric_key: 'x',
+                                           value: 1, date_status: 'bounded',
+                                           measured_at: null, measured_after: null,
+                                           measured_before: null });
+          var t2 = false;
+          try { S.save(s2); } catch (e2) { t2 = true; }
+          must(t2, '저장할 때 경계 없는 bounded 를 못 잡았습니다');
+          must(m.getItem('jikt_store_v1') === before, '거부인데 저장칸이 바뀌었습니다');
+
+          var s3 = S.load();
+          s3.videos[0].measurements.push({ measurement_id: S.newId(), metric_key: 'x',
+                                           value: 1, date_status: 'known',
+                                           measured_at: '2026-02-30' });
+          var t3 = false;
+          try { S.save(s3); } catch (e3) { t3 = true; }
+          must(t3, '저장할 때 2026-02-30 을 못 잡았습니다');
+          must(m.getItem('jikt_store_v1') === before, '거부인데 저장칸이 바뀌었습니다');
+
+          return '거부 ' + bads.length + '가지 · 통과 ' + goods.length + '가지 / ' +
+                 'bounded 경계 둘 다 없음 거부: ' + m1 + ' / 저장 때도 거부';
+        });
+      });
+
+      // 48. 반례 실행기가 아무 경로에서나 c01~c12 정확히 12개만 돌린다
+      test(48, '반례 실행기가 아무 경로에서나 c01~c12 정확히 12개만 실행한다', function () {
+        var isNode = (typeof process !== 'undefined' && process && process.versions &&
+                      process.versions.node && typeof require === 'function');
+        if (!isNode) {
+          return '브라우저에서는 파일을 복사해 돌릴 수 없어 건너뜁니다 (node test_node.js 에서 확인합니다)';
+        }
+        var fs = require('fs'), path = require('path'), os = require('os');
+        var cp = require('child_process');
+
+        // 이 시험 파일이 있는 곳을 기준으로 원본 폴더를 찾습니다.
+        var srcDir = __dirname;
+        must(fs.existsSync(path.join(srcDir, '_counter_run.js')),
+             '_counter_run.js 를 못 찾았습니다: ' + srcDir);
+
+        var runnerText = fs.readFileSync(path.join(srcDir, '_counter_run.js'), 'utf8');
+        must(runnerText.indexOf('/home/claude/build') === -1,
+             '반례 실행기에 절대경로 /home/claude/build 가 남아 있습니다');
+        must(runnerText.indexOf('__dirname') !== -1,
+             '반례 실행기가 __dirname 기준 상대경로를 쓰지 않습니다');
+
+        // 아무 폴더에나 풀어 놓은 것처럼 임시 폴더에 통째로 복사합니다.
+        var tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'jikt-cnt-'));
+        var need = ['jikt_store.js', '_tests_common.js', '_counter_run.js'];
+        for (var i = 0; i < need.length; i++) {
+          fs.writeFileSync(path.join(tmp, need[i]),
+                           fs.readFileSync(path.join(srcDir, need[i])));
+        }
+        var subSrc = path.join(srcDir, '반례시험');
+        var subDst = path.join(tmp, '반례시험');
+        fs.mkdirSync(subDst);
+        var files = fs.readdirSync(subSrc);
+        var cCount = 0;
+        for (i = 0; i < files.length; i++) {
+          fs.writeFileSync(path.join(subDst, files[i]),
+                           fs.readFileSync(path.join(subSrc, files[i])));
+          if (/^c\d+_.*\.js$/.test(files[i])) cCount++;
+        }
+        must(cCount === 12, '반례시험 폴더의 c 파일이 12개가 아닙니다: ' + cCount);
+
+        // 시험 파일이 아닌 JS 를 하나 끼워 둡니다 — 이것까지 돌리면 안 됩니다.
+        fs.writeFileSync(path.join(subDst, 'zz_함정.js'),
+                         'throw new Error("이 파일은 시험이 아닙니다");\n');
+
+        var out = '', code = 0;
+        try {
+          out = cp.execFileSync(process.execPath, ['_counter_run.js'],
+                                { cwd: tmp, encoding: 'utf8',
+                                  stdio: ['ignore', 'pipe', 'pipe'] });
+        } catch (e) {
+          out = String((e && (e.stdout || '')) || '') + String((e && (e.stderr || '')) || '');
+          code = (e && e.status) || 1;
+        }
+        must(code === 0, '임시 폴더에서 반례 실행기가 실패했습니다:\n' + out);
+        must(out.indexOf('전체 12개 중 12개 통과') !== -1,
+             '12개 전부 통과가 아닙니다:\n' + out);
+        must(out.indexOf('이 파일은 시험이 아닙니다') === -1,
+             '시험이 아닌 JS 파일까지 읽었습니다');
+
+        // 실행 파일이 12개가 아니면 오류를 내야 합니다.
+        fs.unlinkSync(path.join(subDst, files.filter(function (f) {
+          return /^c12_/.test(f);
+        })[0]));
+        var failed = false, out2 = '';
+        try {
+          out2 = cp.execFileSync(process.execPath, ['_counter_run.js'],
+                                 { cwd: tmp, encoding: 'utf8',
+                                  stdio: ['ignore', 'pipe', 'pipe'] });
+        } catch (e2) {
+          failed = true;
+          out2 = String((e2 && (e2.stdout || '')) || '') + String((e2 && (e2.stderr || '')) || '');
+        }
+        must(failed, '시험 파일이 11개인데도 그냥 돌았습니다');
+        must(out2.indexOf('12') !== -1, '몇 개라야 하는지 알려 주지 않습니다:\n' + out2);
+        return '임시 폴더(' + tmp + ')에서 12개 전부 통과 / 함정 JS 는 안 읽음 / 11개면 오류';
+      });
+
+      // ══ 3차 보정 시험 여덟 가지 (41~48) — 여기까지 ══
+
+    } finally {
+      // 끼운 메모리 저장칸을 뺍니다. 실제 저장칸은 처음부터 끝까지 손대지 않았습니다.
+      S.useDefaultStorage();
+    }
+
+    return results;
+  }
+
+  root.JiktTests = {
+    run: run,
+    WATCH_KEYS: WATCH_KEYS,
+    LEGACY_KEYS: LEGACY_KEYS,
+    snapshotReal: snapshotReal,
+    makeMemoryStorage: makeMemoryStorage,
+    fakeSeeds: fakeSeeds
+  };
+  if (typeof module !== 'undefined' && module.exports) module.exports = root.JiktTests;
+
+})(typeof globalThis !== 'undefined' ? globalThis :
+   (typeof window !== 'undefined' ? window : this));
+
+</script>
+<script>
+(function () {
+  'use strict';
+
+  function go() {
+    // 시험 전 — 실제 옛 이름표의 모습(길이 + 앞 40글자). 읽기만 합니다.
+    var before = JiktTests.snapshotReal(JiktStore);
+
+    var results;
+    try {
+      results = JiktTests.run(JiktStore);
+    } catch (e) {
+      results = [{ no: 0, name: '시험을 돌리다 멈췄습니다', ok: false, detail: (e && e.message) || String(e) }];
+    }
+
+    // 시험 뒤 — 같은 방식으로 다시 찍습니다.
+    var after = JiktTests.snapshotReal(JiktStore);
+
+    var pass = 0;
+    for (var r = 0; r < results.length; r++) if (results[r].ok) pass++;
+
+    var score = document.getElementById('score');
+    score.textContent = '전체 ' + results.length + '개 중 ' + pass + '개 통과';
+    score.className = (pass === results.length) ? 'ok' : 'no';
+
+    // 실제 이름표가 그대로인지
+    var keys = JiktTests.LEGACY_KEYS, bad = [], tb = document.querySelector('#keytable tbody');
+    tb.innerHTML = '';
+    for (var j = 0; j < keys.length; j++) {
+      var k = keys[j], a = before[k] || {}, b = after[k] || {};
+      var okOne = (a.있음 === b.있음) && (a.길이 === b.길이) && (a.앞40글자 === b.앞40글자);
+      if (!okOne) bad.push(k);
+      var tr = document.createElement('tr');
+      function td(text, cls) {
+        var c = document.createElement('td');
+        c.textContent = text;
+        if (cls) c.className = cls;
+        return c;
+      }
+      tr.appendChild(td(k));
+      tr.appendChild(td(okOne ? '같음' : '다름!', okOne ? 'ok' : 'no'));
+      tr.appendChild(td((a.길이 === undefined ? '?' : a.길이) + ' → ' + (b.길이 === undefined ? '?' : b.길이)));
+      tr.appendChild(td((a.앞40글자 || '(없음)') + '  →  ' + (b.앞40글자 || '(없음)')));
+      tb.appendChild(tr);
+    }
+
+    var safety = document.getElementById('safety');
+    if (bad.length === 0) {
+      safety.innerHTML = '<span class="ok">실제 옛 이름표 다섯 개: 시험 전후가 길이·앞 40글자까지 모두 같습니다. ' +
+                         '시험은 메모리 저장칸에서만 돌았습니다.</span>';
+    } else {
+      safety.innerHTML = '<span class="no">주의: 달라진 이름표가 있습니다 — ' + bad.join(', ') + '</span>';
+    }
+
+    var list = document.getElementById('list');
+    list.innerHTML = '';
+    for (var m = 0; m < results.length; m++) {
+      var t = results[m];
+      var div = document.createElement('div');
+      div.className = 'row ' + (t.ok ? 'p' : 'f');
+      var n = document.createElement('div');
+      n.className = 'name';
+      n.textContent = (t.ok ? '통과' : '실패') + ' · ' + t.no + '. ' + t.name;
+      var d = document.createElement('div');
+      d.className = 'detail';
+      d.textContent = t.detail;
+      div.appendChild(n); div.appendChild(d);
+      list.appendChild(div);
+    }
+  }
+
+  document.getElementById('again').addEventListener('click', go);
+  go();
+})();
+</script>
+</body>
+</html>
